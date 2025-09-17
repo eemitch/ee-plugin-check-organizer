@@ -1,0 +1,292 @@
+/**
+ * EE Plugin Check Organizer Styles
+ * Styling for the Plugin Check filtering interface
+ */
+
+/* Categories and Filter Side-by-Side Layout */
+.ee-categories-filter-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px 0;
+}
+
+.ee-categories-section {
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.ee-categories-section h4 {
+    margin-top: 0;
+}
+
+/* Adjust filter container when in side-by-side layout */
+.ee-categories-filter-wrapper .ee-filter-container {
+    flex: 1;
+    margin: 0;
+    max-width: 500px;
+}
+
+/* Main Filter Container */
+.ee-filter-container {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin: 20px 0;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.ee-filter-header h3 {
+    margin: 0 0 15px 0;
+    color: #1d2327;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.ee-filter-description {
+    margin: 0 0 15px 0;
+    color: #646970;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Disabled State */
+.ee-filter-container.ee-disabled {
+    background: #f6f7f7;
+    border-color: #dcdcde;
+    opacity: 0.7;
+}
+
+.ee-filter-container.ee-disabled .ee-filter-header h3 {
+    color: #646970;
+}
+
+.ee-radio-option.ee-disabled {
+    background: #f6f7f7;
+    border-color: #dcdcde;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.ee-radio-option.ee-disabled:hover {
+    background: #f6f7f7;
+    border-color: #dcdcde;
+}
+
+.ee-radio-option.ee-disabled input[type="radio"] {
+    cursor: not-allowed;
+}
+
+.ee-radio-option.ee-disabled .ee-radio-label {
+    color: #a7aaad;
+}
+
+.ee-radio-option.ee-disabled .ee-radio-label strong {
+    color: #a7aaad;
+}
+
+/* Filter Controls */
+.ee-filter-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Dropdown Group */
+.ee-filter-dropdown-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.ee-dropdown-label {
+    margin: 0;
+    font-weight: 600;
+    color: #1d2327;
+    font-size: 14px;
+}
+
+.ee-file-dropdown {
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #1d2327;
+    cursor: pointer;
+}
+
+.ee-file-dropdown:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+/* Disabled state for dropdown */
+.ee-disabled .ee-file-dropdown {
+    background-color: #f6f7f7;
+    color: #a7aaad;
+    cursor: not-allowed;
+    border-color: #dcdcde;
+}
+
+.ee-disabled .ee-dropdown-label {
+    color: #a7aaad;
+}
+
+/* Filter Results */
+.ee-filter-results {
+    margin-top: 20px;
+}
+
+.ee-filtered-results {
+    background: #fff;
+}
+
+.ee-filtered-results h4 {
+    color: #1d2327;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+    border-bottom: 1px solid #c3c4c7;
+    padding-bottom: 5px;
+}
+
+.ee-filtered-results h4:first-child {
+    margin-top: 0;
+}
+
+/* Highlight Matches */
+.ee-highlight {
+    background-color: #fff3cd;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 600;
+    color: #856404;
+}
+
+/* Notice Styling */
+.ee-filter-results .notice {
+    margin: 0;
+    padding: 12px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    /* Stack categories and filter vertically on tablets */
+    .ee-categories-filter-wrapper {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .ee-categories-section {
+        min-width: auto;
+    }
+
+    .ee-categories-filter-wrapper .ee-filter-container {
+        max-width: none;
+    }
+
+    .ee-filter-controls {
+        gap: 12px;
+    }
+
+    .ee-filter-radio-group {
+        gap: 10px;
+    }
+
+    .ee-radio-option {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .ee-filter-container {
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .ee-filter-header h3 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .ee-radio-option {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .ee-radio-label strong {
+        font-size: 13px;
+    }
+
+    .ee-radio-label small {
+        font-size: 11px;
+    }
+}
+
+/* Integration with WordPress Admin */
+.wp-admin .ee-filter-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Accessibility Improvements */
+.ee-radio-option:focus-within {
+    outline: 2px solid #2271b1;
+    outline-offset: 1px;
+}
+
+.ee-radio-option input[type="radio"]:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .ee-filter-container {
+        border-width: 2px;
+    }
+
+    .ee-radio-option {
+        border-width: 2px;
+    }
+}
+
+/* Dark mode support (if theme supports it) */
+@media (prefers-color-scheme: dark) {
+    .ee-filter-container {
+        background: #1d2327;
+        border-color: #3c434a;
+        color: #f0f0f1;
+    }
+
+    .ee-filter-header h3 {
+        color: #f0f0f1;
+    }
+
+    .ee-radio-option {
+        background: #2c3338;
+        border-color: #3c434a;
+    }
+
+    .ee-radio-option:hover {
+        background: #3c434a;
+        border-color: #72aee6;
+    }
+
+    .ee-radio-option:has(input[type="radio"]:checked) {
+        border-color: #72aee6;
+        background: #1e3a5f;
+    }
+
+    .ee-radio-label strong {
+        color: #f0f0f1;
+    }
+
+    .ee-radio-label small {
+        color: #a7aaad;
+    }
+}
