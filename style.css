@@ -290,3 +290,76 @@
         color: #a7aaad;
     }
 }
+
+/* Export Controls */
+.ee-export-controls {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #dcdcde;
+}
+
+.ee-export-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ee-export-buttons strong {
+    color: #1d2327;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.ee-export-buttons .button {
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 30px;
+    padding: 4px 12px;
+}
+
+.ee-export-note {
+    color: #646970;
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 10px;
+}
+
+/* Disabled state for export buttons */
+.ee-disabled .ee-export-buttons .button {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive export controls */
+@media (max-width: 782px) {
+    .ee-export-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .ee-export-note {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
+/* Sort Controls */
+.ee-sort-controls {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dcdcde;
+}
+
+.ee-sort-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Sort controls use the same dropdown styling as filter dropdowns */
+.ee-sort-controls .ee-filter-dropdown-group {
+    margin-bottom: 0;
+}

@@ -1,27 +1,46 @@
 /**
  * EE Plugin Check Organizer
  * JavaScript functionality for filtering Plugin Check results
+ *
+ * DEBUG MODE: Set DEBUG_MODE to false for production release
+ * When DEBUG_MODE is true:
+ * - Console logging is enabled
+ * - Raw array output is displayed below results
+ * - testScan() function is available globally
  */
 
 (function($) {
     'use strict';
 
+    // Debug Mode - Set to false for production
+    const DEBUG_MODE = true;
+
     let filterInterface = null;
     let originalResults = [];
     let allFileBlocks = [];
+    let currentSort = { field: null, direction: 'asc' }; // Sorting state
+
+    /**
+     * Debug console logging - only when DEBUG_MODE is true
+     */
+    function debugLog(...args) {
+        if (DEBUG_MODE) {
+            console.log('EE Plugin Check Organizer:', ...args);
+        }
+    }
 
     /**
      * Initialize the Plugin Check Organizer
      */
     window.eePluginCheckOrganizerInit = function() {
-        console.log('EE Plugin Check Organizer: Init function called');
+        debugLog('Init function called');
 
         // Check if we're on a Plugin Check page
         const categoriesTable = $('#plugin-check__categories');
-        console.log('EE Plugin Check Organizer: Categories table found:', categoriesTable.length > 0);
+        debugLog('Categories table found:', categoriesTable.length > 0);
 
         if (categoriesTable.length === 0) {
-            console.log('EE Plugin Check Organizer: No categories table found, exiting');
+            debugLog('No categories table found, exiting');
             return;
         }
 
@@ -37,13 +56,32 @@
         // Add utility functions to the global scope
         window.eePluginCheckOrganizer = {
             refreshResults: refreshResults,
-            testScan: function() {
-                console.log('Manual test scan triggered');
-                storeOriginalResults();
-            }
+            exportResults: exportResults
         };
 
-        console.log('EE Plugin Check Organizer: Initialization complete');
+        // Add debug functions only in debug mode
+        if (DEBUG_MODE) {
+            window.eePluginCheckOrganizer.testScan = function() {
+                debugLog('Manual test scan triggered');
+                storeOriginalResults();
+            };
+            window.eePluginCheckOrganizer.debugMode = true;
+            window.eePluginCheckOrganizer.exportCSV = function() { exportResults('csv'); };
+            window.eePluginCheckOrganizer.exportJSON = function() { exportResults('json'); };
+            window.eePluginCheckOrganizer.exportTXT = function() { exportResults('txt'); };
+            window.eePluginCheckOrganizer.sortByLineAsc = function() { applySortFromDropdown('line', 'asc'); };
+            window.eePluginCheckOrganizer.sortByLineDesc = function() { applySortFromDropdown('line', 'desc'); };
+            window.eePluginCheckOrganizer.sortByTypeAsc = function() { applySortFromDropdown('type', 'asc'); };
+            window.eePluginCheckOrganizer.sortByTypeDesc = function() { applySortFromDropdown('type', 'desc'); };
+            window.eePluginCheckOrganizer.clearSort = function() {
+                currentSort = { field: null, direction: 'asc' };
+                $('#ee-sort-dropdown').val('');
+                applyFilters();
+            };
+            debugLog('Debug mode enabled - testScan(), export, and sort functions available');
+        }
+
+        debugLog('Initialization complete');
     };
 
     /**
@@ -131,6 +169,14 @@
         filterInterface.find('#ee-error-type-filter').prop('disabled', false);
         filterInterface.find('#ee-error-code-filter').prop('disabled', false);
 
+        // Enable export buttons
+        filterInterface.find('#ee-export-csv').prop('disabled', false);
+        filterInterface.find('#ee-export-json').prop('disabled', false);
+        filterInterface.find('#ee-export-txt').prop('disabled', false);
+
+        // Enable sort dropdown
+        filterInterface.find('#ee-sort-dropdown').prop('disabled', false);
+
         // Update dropdown options with current data
         const fileOptions = getFileOptionsHtml(true);
         const errorTypeOptions = getErrorTypeOptionsHtml(true);
@@ -202,16 +248,21 @@
             }
         });
 
-        console.log('EE Plugin Check Organizer: Stored', originalResults.length, 'issues from', allFileBlocks.length, 'files');
+        debugLog('Stored', originalResults.length, 'issues from', allFileBlocks.length, 'files');
 
         // Create debug output
-        createDebugOutput();
+        if (DEBUG_MODE) {
+            createDebugOutput();
+        }
     }
 
     /**
      * Create debug output showing what data we found
      */
     function createDebugOutput() {
+        // Only run in debug mode
+        if (!DEBUG_MODE) return;
+
         // Remove any existing debug output
         $('#ee-debug-output').remove();
 
@@ -254,7 +305,7 @@
             return;
         }
 
-        console.log('EE Plugin Check Organizer: Creating filter interface');
+        debugLog('Creating filter interface');
 
         // Check if results exist to determine if inputs should be disabled
         const hasResults = $('#plugin-check__results').length > 0 && $('#plugin-check__results h4').length > 0;
@@ -298,6 +349,33 @@
                         <select id="ee-error-code-filter" class="ee-file-dropdown" ${disabledAttr}>
                             ${errorCodeOptions}
                         </select>
+                    </div>
+                </div>
+                <div class="ee-sort-controls">
+                    <div class="ee-filter-dropdown-group">
+                        <label for="ee-sort-dropdown" class="ee-dropdown-label">
+                            <strong>🔀 Sort Results:</strong>
+                        </label>
+                        <select id="ee-sort-dropdown" class="ee-file-dropdown" ${disabledAttr}>
+                            <option value="">No sorting</option>
+                            <option value="line-asc">Line # (Low to High)</option>
+                            <option value="line-desc">Line # (High to Low)</option>
+                            <option value="type-asc">Error Type (ERROR → WARNING → INFO)</option>
+                            <option value="type-desc">Error Type (INFO → WARNING → ERROR)</option>
+                            <option value="code-asc">Error Code (A to Z)</option>
+                            <option value="code-desc">Error Code (Z to A)</option>
+                            <option value="file-asc">File Name (A to Z)</option>
+                            <option value="file-desc">File Name (Z to A)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ee-export-controls">
+                    <div class="ee-export-buttons">
+                        <strong>📊 Export Results:</strong>
+                        <button id="ee-export-csv" class="button button-secondary" ${disabledAttr}>CSV</button>
+                        <button id="ee-export-json" class="button button-secondary" ${disabledAttr}>JSON</button>
+                        <button id="ee-export-txt" class="button button-secondary" ${disabledAttr}>TXT</button>
+                        <span class="ee-export-note">(Exports currently filtered results)</span>
                     </div>
                 </div>
                 <div id="ee-filter-results" class="ee-filter-results"></div>
@@ -402,6 +480,80 @@
         fileDropdown.on('change', applyFilters);
         errorTypeDropdown.on('change', applyFilters);
         errorCodeDropdown.on('change', applyFilters);
+
+        // Sort dropdown change event
+        $('#ee-sort-dropdown').on('change', function() {
+            const sortValue = $(this).val();
+            if (sortValue) {
+                const [field, direction] = sortValue.split('-');
+                applySortFromDropdown(field, direction);
+            } else {
+                // Clear sorting
+                currentSort = { field: null, direction: 'asc' };
+                applyFilters();
+            }
+        });
+
+        // Export button events
+        $('#ee-export-csv').on('click', function() { exportResults('csv'); });
+        $('#ee-export-json').on('click', function() { exportResults('json'); });
+        $('#ee-export-txt').on('click', function() { exportResults('txt'); });
+    }
+
+    /**
+     * Apply sort from dropdown selection
+     */
+    function applySortFromDropdown(field, direction) {
+        debugLog('Applying sort from dropdown:', field, direction);
+
+        currentSort.field = field;
+        currentSort.direction = direction;
+
+        // Re-apply filters with new sort order
+        applyFilters();
+    }
+
+    /**
+     * Apply sorting to filtered issues array
+     */
+    function applySorting(issues, sortField, direction) {
+        return issues.slice().sort((a, b) => {
+            let valueA, valueB;
+
+            switch (sortField) {
+                case 'line':
+                    valueA = parseInt(a.line) || 0;
+                    valueB = parseInt(b.line) || 0;
+                    break;
+                case 'type':
+                    // Sort by severity: ERROR, WARNING, INFO
+                    const typeOrder = { 'ERROR': 1, 'WARNING': 2, 'INFO': 3 };
+                    valueA = typeOrder[a.type] || 999;
+                    valueB = typeOrder[b.type] || 999;
+                    break;
+                case 'code':
+                    valueA = a.code.toLowerCase();
+                    valueB = b.code.toLowerCase();
+                    break;
+                case 'file':
+                    valueA = a.fileName.toLowerCase();
+                    valueB = b.fileName.toLowerCase();
+                    break;
+                default:
+                    return 0;
+            }
+
+            // Handle numeric vs string comparison
+            let comparison;
+            if (typeof valueA === 'number' && typeof valueB === 'number') {
+                comparison = valueA - valueB;
+            } else {
+                comparison = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            }
+
+            // Apply direction
+            return direction === 'asc' ? comparison : -comparison;
+        });
     }
 
     /**
@@ -447,6 +599,12 @@
         }
 
         console.log('EE Plugin Check Organizer: Found', filteredIssues.length, 'filtered issues');
+
+        // Apply sorting if a sort field is selected
+        if (currentSort.field) {
+            filteredIssues = applySorting(filteredIssues, currentSort.field, currentSort.direction);
+            debugLog('Applied sorting by', currentSort.field, currentSort.direction);
+        }
 
         if (filteredIssues.length === 0) {
             const noResults = $('<div id="ee-filtered-results" class="notice notice-info"><p>No issues found matching the selected criteria.</p></div>');
@@ -741,6 +899,223 @@
         $('#ee-filter-results').empty();
         // Reset radio button to "all"
         $('input[name="ee-filter-type"][value="all"]').prop('checked', true);
+    }
+
+    /**
+     * Export results in various formats
+     */
+    function exportResults(format) {
+        debugLog('Exporting results in format:', format);
+
+        // Get currently filtered results or all results if no filter applied
+        let dataToExport = getCurrentlyDisplayedResults();
+
+        if (dataToExport.length === 0) {
+            alert('No results to export. Please run a plugin check first.');
+            return;
+        }
+
+        // Generate filename with timestamp
+        const now = new Date();
+        const timestamp = now.getFullYear() + '-' +
+                         String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                         String(now.getDate()).padStart(2, '0') + '_' +
+                         String(now.getHours()).padStart(2, '0') + '-' +
+                         String(now.getMinutes()).padStart(2, '0');
+
+        let filename, content, mimeType;
+
+        switch (format.toLowerCase()) {
+            case 'csv':
+                filename = `plugin-check-results_${timestamp}.csv`;
+                content = generateCSV(dataToExport);
+                mimeType = 'text/csv';
+                break;
+            case 'json':
+                filename = `plugin-check-results_${timestamp}.json`;
+                content = generateJSON(dataToExport);
+                mimeType = 'application/json';
+                break;
+            case 'txt':
+                filename = `plugin-check-results_${timestamp}.txt`;
+                content = generateTXT(dataToExport);
+                mimeType = 'text/plain';
+                break;
+            default:
+                alert('Unknown export format: ' + format);
+                return;
+        }
+
+        // Create and trigger download
+        downloadFile(content, filename, mimeType);
+
+        debugLog('Export completed:', filename);
+    }
+
+    /**
+     * Get currently displayed results (filtered or all)
+     */
+    function getCurrentlyDisplayedResults() {
+        const selectedFile = $('#ee-file-filter').val();
+        const selectedErrorType = $('#ee-error-type-filter').val();
+        const selectedErrorCode = $('#ee-error-code-filter').val();
+
+        let results;
+
+        // If no filters applied, return all results
+        if ((selectedFile === 'all' || !selectedFile) &&
+            (selectedErrorType === 'all' || !selectedErrorType) &&
+            (selectedErrorCode === 'all' || !selectedErrorCode)) {
+            results = originalResults;
+        } else {
+            // Apply filters to get current results
+            results = originalResults.filter(function(issue) {
+                let includeIssue = true;
+
+                // File filter
+                if (selectedFile && selectedFile !== 'all') {
+                    includeIssue = includeIssue && (issue.fileName === selectedFile);
+                }
+
+                // Error type filter
+                if (selectedErrorType && selectedErrorType !== 'all') {
+                    includeIssue = includeIssue && (issue.type === selectedErrorType);
+                }
+
+                // Error code filter
+                if (selectedErrorCode && selectedErrorCode !== 'all') {
+                    // Match the main error code (first 3 parts) like we do in the dropdown
+                    const mainCode = issue.code.split('.').slice(0, 3).join('.');
+                    includeIssue = includeIssue && (mainCode === selectedErrorCode);
+                }
+
+                return includeIssue;
+            });
+        }
+
+        // Apply sorting if active
+        if (currentSort.field) {
+            results = applySorting(results, currentSort.field, currentSort.direction);
+        }
+
+        return results;
+    }
+
+    /**
+     * Generate CSV format
+     */
+    function generateCSV(data) {
+        let csv = 'File,Line,Column,Type,Code,Message\n';
+
+        data.forEach(function(issue) {
+            // Escape CSV fields that contain commas or quotes
+            const fields = [
+                escapeCSVField(issue.fileName),
+                escapeCSVField(issue.line),
+                escapeCSVField(issue.column),
+                escapeCSVField(issue.type),
+                escapeCSVField(issue.code),
+                escapeCSVField(issue.message)
+            ];
+            csv += fields.join(',') + '\n';
+        });
+
+        return csv;
+    }
+
+    /**
+     * Generate JSON format
+     */
+    function generateJSON(data) {
+        const exportData = {
+            exportedAt: new Date().toISOString(),
+            totalIssues: data.length,
+            filters: {
+                file: $('#ee-file-filter').val() || 'all',
+                errorType: $('#ee-error-type-filter').val() || 'all',
+                errorCode: $('#ee-error-code-filter').val() || 'all'
+            },
+            issues: data.map(function(issue) {
+                return {
+                    id: issue.id,
+                    fileName: issue.fileName,
+                    line: parseInt(issue.line) || 0,
+                    column: parseInt(issue.column) || 0,
+                    type: issue.type,
+                    code: issue.code,
+                    message: issue.message
+                };
+            })
+        };
+
+        return JSON.stringify(exportData, null, 2);
+    }
+
+    /**
+     * Generate TXT format
+     */
+    function generateTXT(data) {
+        let txt = 'WordPress Plugin Check Results Export\n';
+        txt += '=====================================\n\n';
+        txt += `Exported: ${new Date().toLocaleString()}\n`;
+        txt += `Total Issues: ${data.length}\n\n`;
+
+        // Group by file
+        const fileGroups = {};
+        data.forEach(function(issue) {
+            if (!fileGroups[issue.fileName]) {
+                fileGroups[issue.fileName] = [];
+            }
+            fileGroups[issue.fileName].push(issue);
+        });
+
+        Object.keys(fileGroups).forEach(function(fileName) {
+            txt += `FILE: ${fileName}\n`;
+            txt += ''.padEnd(fileName.length + 6, '-') + '\n';
+
+            fileGroups[fileName].forEach(function(issue) {
+                txt += `Line ${issue.line}, Column ${issue.column}: [${issue.type}] ${issue.code}\n`;
+                txt += `  ${issue.message}\n\n`;
+            });
+            txt += '\n';
+        });
+
+        return txt;
+    }
+
+    /**
+     * Escape CSV field
+     */
+    function escapeCSVField(field) {
+        if (typeof field !== 'string') {
+            field = String(field);
+        }
+
+        // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
+        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+            return '"' + field.replace(/"/g, '""') + '"';
+        }
+        return field;
+    }
+
+    /**
+     * Download file to user's computer
+     */
+    function downloadFile(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up the blob URL
+        window.URL.revokeObjectURL(url);
     }
 
 })(jQuery);

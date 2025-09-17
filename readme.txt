@@ -16,55 +16,60 @@ Enhance the WordPress Plugin Check tool with powerful filtering and organization
 
 = Key Features =
 
-* **Real-time Search Filtering** - Filter Plugin Check results as you type
-* **Multiple Filter Types** - Filter by file name, error type, or error code
-* **Smart Highlighting** - Matching text is highlighted in filtered results
-* **Responsive Design** - Works perfectly on desktop, tablet, and mobile devices
+* **Triple Dropdown Filtering** - Three independent dropdown filters for precise result organization
+* **File-Based Filtering** - Filter results by specific files in your plugin
+* **Error Type Filtering** - Filter by error severity (ERROR, WARNING, INFO)
+* **Error Code Filtering** - Filter by specific WordPress coding standard error codes
+* **Real-time Results** - Instant filtering as you select different options
 * **WordPress Admin Integration** - Seamlessly integrates with the existing Plugin Check interface
-* **Accessibility Focused** - Built with accessibility best practices and keyboard navigation
+* **Responsive Design** - Works perfectly on desktop, tablet, and mobile devices
 * **No Database Changes** - Works entirely with the existing Plugin Check DOM structure
 
 = How It Works =
 
-This plugin works by enhancing the existing Plugin Check tool results page with a powerful filtering interface. It doesn't modify the Plugin Check tool itself, but rather adds a layer of organization on top of the results.
+This plugin works by enhancing the existing Plugin Check tool results page with a powerful triple dropdown filtering interface. It doesn't modify the Plugin Check tool itself, but rather adds a layer of organization on top of the results.
 
-When you run a plugin check, you'll see a new filter interface above the results that allows you to:
+When you run a plugin check, you'll see three dropdown filters above the results that allow you to:
 
-1. **Search Everything** - Type in the main search box to filter across all result data
-2. **Filter by File** - Click the "File Name" button to search only file names
-3. **Filter by Error Type** - Click the "Error Type" button to search only error types (ERROR, WARNING, etc.)
-4. **Filter by Error Code** - Click the "Error Code" button to search only error codes
-5. **Clear Filters** - Use the "Show All" button or clear button to reset the view
+1. **Filter by File** - Select a specific file from the dropdown to see only results from that file
+2. **Filter by Error Type** - Choose ERROR, WARNING, or INFO to see only that severity level
+3. **Filter by Error Code** - Select specific WordPress coding standard error codes
+4. **Combine Filters** - Use multiple dropdowns together for precise filtering
+5. **Clear Filters** - Select "All Files", "All Types", or "All Codes" to reset individual filters
+
+The filters work independently and in combination, so you can filter by a specific file AND error type AND error code simultaneously for maximum precision.
 
 = Use Cases =
 
-* **Large Plugin Analysis** - Quickly find specific issues in plugins with many files
-* **Error Type Focus** - Filter to see only ERRORs or only WARNINGs
-* **Code Standard Review** - Search for specific error codes you want to address
-* **File-Specific Issues** - Focus on problems in specific files or file types
+* **Large Plugin Analysis** - Quickly isolate issues in specific files within complex plugins
+* **Error Severity Review** - Focus on critical ERRORs vs. minor WARNINGs or INFO messages
+* **Code Standard Compliance** - Filter by specific WordPress coding standard error codes
+* **File-Specific Debugging** - Examine all issues within a particular file
+* **Progressive Issue Resolution** - Work through errors systematically by type and severity
 * **Development Workflow** - Efficiently organize and prioritize plugin check results
 
 = Technical Details =
 
-* Works entirely with JavaScript DOM manipulation
+* Works entirely with JavaScript DOM manipulation using jQuery
 * No server-side processing or database storage
 * Compatible with all Plugin Check tool versions
 * Preserves original Plugin Check functionality
 * Lightweight and performance-optimized
+* Uses WordPress core admin table styling (widefat, striped classes)
 
 == Installation ==
 
 1. Upload the `ee-plugin-check-organizer` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Navigate to Tools > Plugin Check to use the enhanced interface
-4. Run a plugin check to see the new filtering capabilities
+4. Run a plugin check to see the three dropdown filters above the results
 
 = Manual Installation =
 
 1. Download the plugin files
 2. Extract the files to your `/wp-content/plugins/ee-plugin-check-organizer/` directory
 3. Activate the plugin in your WordPress admin panel
-4. The filtering interface will automatically appear when using Plugin Check
+4. The triple dropdown filtering interface will automatically appear when using Plugin Check
 
 == Frequently Asked Questions ==
 
@@ -82,7 +87,7 @@ No. This plugin works entirely with the DOM structure created by Plugin Check. I
 
 = Can I customize the filter interface? =
 
-The plugin uses WordPress admin styling by default. You can add custom CSS to your admin theme to modify the appearance if needed.
+The plugin uses WordPress core admin styling (widefat and striped table classes) by default. You can add custom CSS to your admin theme to modify the appearance if needed.
 
 = Is this plugin compatible with other Plugin Check extensions? =
 
@@ -90,31 +95,32 @@ Yes. This plugin works with the standard Plugin Check DOM structure and doesn't 
 
 = What happens if Plugin Check updates and changes its structure? =
 
-The plugin is designed to gracefully handle DOM changes. If the structure changes significantly, the filtering may not work, but it won't break Plugin Check functionality.
+The plugin is designed to gracefully handle DOM changes. If the structure changes significantly, the filtering may not work, but it won't break Plugin Check functionality. The debug mode can be enabled for troubleshooting if needed.
 
 == Screenshots ==
 
-1. The filter interface above Plugin Check results
-2. Real-time filtering in action
-3. Highlighted search results
-4. Mobile-responsive filter controls
-5. Different filter type buttons
+1. The triple dropdown filter interface above Plugin Check results
+2. File filter dropdown showing available files
+3. Error type filter dropdown (ERROR, WARNING, INFO)
+4. Error code filter dropdown with WordPress coding standards
+5. Combined filtering in action showing filtered results
+6. Mobile-responsive filter layout
 
 == Changelog ==
 
 = 1.0.0 =
 * Initial release
-* Real-time search filtering functionality
-* Multiple filter types (file, error type, error code)
+* Triple dropdown filtering system (File, Error Type, Error Code)
+* WordPress core admin table styling integration
 * Responsive design implementation
-* WordPress admin styling integration
-* Accessibility features
+* Independent and combinable filter functionality
+* Debug mode for development and troubleshooting
 * Mobile optimization
 
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release of EE Plugin Check Organizer. Adds powerful filtering capabilities to the WordPress Plugin Check tool.
+Initial release of EE Plugin Check Organizer. Adds powerful triple dropdown filtering capabilities to the WordPress Plugin Check tool.
 
 == Developer Notes ==
 
@@ -127,18 +133,17 @@ This plugin uses the following WordPress hooks:
 = JavaScript API =
 
 The plugin exposes a global JavaScript object `window.eePluginCheckOrganizer` with the following methods:
-* `clearFilter()` - Clears all active filters
-* `filterByType(type)` - Filters results by error type
-* `filterByCode(code)` - Filters results by error code
-* `filterByFile(filename)` - Filters results by file name
+* `applyFilters()` - Applies current filter selections to results
+* `resetFilters()` - Resets all filters to show all results
+* `debugLog(message)` - Logs debug messages when debug mode is enabled
 
 = CSS Classes =
 
 Key CSS classes for customization:
 * `.ee-filter-container` - Main filter interface container
-* `.ee-filter-input` - Search input field
-* `.ee-filter-buttons` - Filter type buttons container
-* `.ee-highlight` - Highlighted matching text
+* `.ee-filter-dropdown-group` - Individual dropdown filter groups
+* `.ee-filter-label` - Dropdown labels
+* `.ee-filter-dropdown` - Dropdown select elements
 * `.ee-filtered-results` - Filtered results container
 
 = Contributing =
