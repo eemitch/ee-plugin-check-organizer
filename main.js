@@ -69,6 +69,10 @@
             window.eePluginCheckOrganizer.exportCSV = function() { exportResults('csv'); };
             window.eePluginCheckOrganizer.exportJSON = function() { exportResults('json'); };
             window.eePluginCheckOrganizer.exportTXT = function() { exportResults('txt'); };
+            window.eePluginCheckOrganizer.setExportFormat = function(format) {
+                $('#ee-export-dropdown').val(format);
+                debugLog('Export format set to:', format);
+            };
             window.eePluginCheckOrganizer.sortByLineAsc = function() { applySortFromDropdown('line', 'asc'); };
             window.eePluginCheckOrganizer.sortByLineDesc = function() { applySortFromDropdown('line', 'desc'); };
             window.eePluginCheckOrganizer.sortByTypeAsc = function() { applySortFromDropdown('type', 'asc'); };
@@ -152,6 +156,9 @@
 
             // Enable the filter interface
             enableFilterInterface();
+
+            // Update scan summary
+            updateScanSummary();
         } else {
             console.log('EE Plugin Check Organizer: No results found yet');
         }
@@ -169,10 +176,9 @@
         filterInterface.find('#ee-error-type-filter').prop('disabled', false);
         filterInterface.find('#ee-error-code-filter').prop('disabled', false);
 
-        // Enable export buttons
-        filterInterface.find('#ee-export-csv').prop('disabled', false);
-        filterInterface.find('#ee-export-json').prop('disabled', false);
-        filterInterface.find('#ee-export-txt').prop('disabled', false);
+        // Enable export dropdown and Go button
+        filterInterface.find('#ee-export-dropdown').prop('disabled', false);
+        filterInterface.find('#ee-export-go').prop('disabled', false);
 
         // Enable sort dropdown
         filterInterface.find('#ee-sort-dropdown').prop('disabled', false);
@@ -190,6 +196,60 @@
         filterInterface.find('.ee-filter-description').text('Filter results by file, error type, and error code:');
 
         console.log('EE Plugin Check Organizer: Filter interface enabled');
+    }
+
+    /**
+     * Update the scan summary display with current results
+     */
+    function updateScanSummary() {
+        const summaryElement = $('#ee-scan-summary');
+        if (summaryElement.length === 0 || originalResults.length === 0) {
+            return;
+        }
+
+        // Count unique files
+        const uniqueFiles = new Set();
+        originalResults.forEach(issue => {
+            uniqueFiles.add(issue.fileName);
+        });
+
+        // Count issues by type
+        const typeCounts = { ERROR: 0, WARNING: 0, INFO: 0 };
+        originalResults.forEach(issue => {
+            if (typeCounts.hasOwnProperty(issue.type)) {
+                typeCounts[issue.type]++;
+            }
+        });
+
+        // Create summary HTML
+        const totalIssues = originalResults.length;
+        const fileCount = uniqueFiles.size;
+
+        let summaryHtml = `
+            <div class="ee-summary-stats">
+                <span class="ee-summary-item">
+                    <strong>${totalIssues}</strong> issues found
+                </span>
+                <span class="ee-summary-separator">•</span>
+                <span class="ee-summary-item">
+                    <strong>${fileCount}</strong> files affected
+                </span>
+        `;
+
+        // Add type breakdown if there are multiple types
+        if (typeCounts.ERROR > 0 || typeCounts.WARNING > 0 || typeCounts.INFO > 0) {
+            summaryHtml += `<span class="ee-summary-separator">•</span>`;
+            const typeBreakdown = [];
+            if (typeCounts.ERROR > 0) typeBreakdown.push(`<span class="ee-error-count">${typeCounts.ERROR} errors</span>`);
+            if (typeCounts.WARNING > 0) typeBreakdown.push(`<span class="ee-warning-count">${typeCounts.WARNING} warnings</span>`);
+            if (typeCounts.INFO > 0) typeBreakdown.push(`<span class="ee-info-count">${typeCounts.INFO} info</span>`);
+            summaryHtml += typeBreakdown.join(', ');
+        }
+
+        summaryHtml += `</div>`;
+
+        summaryElement.html(summaryHtml).show();
+        debugLog('Scan summary updated:', { totalIssues, fileCount, typeCounts });
     }
 
     /**
@@ -226,8 +286,8 @@
                     const issue = {
                         id: issueId++,
                         fileName: fileName,
-                        line: row.find('td[data-label="Line"]').text().trim(),
-                        column: row.find('td[data-label="Column"]').text().trim(),
+                        line: parseInt(row.find('td[data-label="Line"]').text().trim()) || 0,
+                        column: parseInt(row.find('td[data-label="Column"]').text().trim()) || 0,
                         type: row.find('td[data-label="Type"]').text().trim(),
                         code: row.find('td[data-label="Code"]').text().trim(),
                         message: row.find('td[data-label="Message"]').text().trim(),
@@ -320,7 +380,10 @@
         filterInterface = $(`
             <div id="ee-plugin-check-filter" class="ee-filter-container ${disabledClass}">
                 <div class="ee-filter-header">
-                    <h3>🔍 Plugin Check Organizer</h3>
+                    <div class="ee-header-content">
+                        <h3>🔍 Plugin Check Organizer</h3>
+                        <div id="ee-scan-summary" class="ee-scan-summary" style="display: none;"></div>
+                    </div>
                     <p class="ee-filter-description">
                         ${hasResults ? 'Filter results by file, error type, and error code:' : 'Run a plugin check to organize and filter results.'}
                     </p>
@@ -370,11 +433,17 @@
                     </div>
                 </div>
                 <div class="ee-export-controls">
-                    <div class="ee-export-buttons">
-                        <strong>📊 Export Results:</strong>
-                        <button id="ee-export-csv" class="button button-secondary" ${disabledAttr}>CSV</button>
-                        <button id="ee-export-json" class="button button-secondary" ${disabledAttr}>JSON</button>
-                        <button id="ee-export-txt" class="button button-secondary" ${disabledAttr}>TXT</button>
+                    <div class="ee-filter-dropdown-group">
+                        <label for="ee-export-dropdown" class="ee-dropdown-label">
+                            <strong>📊 Export Results:</strong>
+                        </label>
+                        <select id="ee-export-dropdown" class="ee-file-dropdown" ${disabledAttr}>
+                            <option value="">Select export format...</option>
+                            <option value="csv">CSV (Comma-Separated Values)</option>
+                            <option value="json">JSON (JavaScript Object Notation)</option>
+                            <option value="txt">TXT (Plain Text)</option>
+                        </select>
+                        <button id="ee-export-go" class="button button-primary" ${disabledAttr}>Go</button>
                         <span class="ee-export-note">(Exports currently filtered results)</span>
                     </div>
                 </div>
@@ -494,10 +563,16 @@
             }
         });
 
-        // Export button events
-        $('#ee-export-csv').on('click', function() { exportResults('csv'); });
-        $('#ee-export-json').on('click', function() { exportResults('json'); });
-        $('#ee-export-txt').on('click', function() { exportResults('txt'); });
+        // Export Go button event
+        $('#ee-export-go').on('click', function(event) {
+            event.preventDefault(); // Prevent default button behavior
+            const exportFormat = $('#ee-export-dropdown').val();
+            if (exportFormat) {
+                exportResults(exportFormat);
+            } else {
+                alert('Please select an export format first.');
+            }
+        });
     }
 
     /**

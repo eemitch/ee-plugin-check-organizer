@@ -44,6 +44,85 @@
     font-weight: 600;
 }
 
+/* Header Content Layout */
+.ee-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.ee-header-content h3 {
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+/* Scan Summary Styles */
+.ee-scan-summary {
+    flex: 1;
+    text-align: right;
+    margin-left: 20px;
+}
+
+.ee-summary-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #646970;
+    background: #f0f6fc;
+    border: 1px solid #c6ddf1;
+    border-radius: 3px;
+    padding: 6px 12px;
+}
+
+.ee-summary-item {
+    white-space: nowrap;
+}
+
+.ee-summary-item strong {
+    color: #1d2327;
+    font-weight: 600;
+}
+
+.ee-summary-separator {
+    color: #a7aaad;
+    font-weight: normal;
+}
+
+.ee-error-count {
+    color: #d63384;
+    font-weight: 500;
+}
+
+.ee-warning-count {
+    color: #f59e0b;
+    font-weight: 500;
+}
+
+.ee-info-count {
+    color: #0ea5e9;
+    font-weight: 500;
+}
+
+/* Responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    .ee-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .ee-scan-summary {
+        text-align: left;
+        margin-left: 0;
+    }
+
+    .ee-summary-stats {
+        flex-wrap: wrap;
+    }
+}
+
 .ee-filter-description {
     margin: 0 0 15px 0;
     color: #646970;
@@ -298,24 +377,24 @@
     border-top: 1px solid #dcdcde;
 }
 
-.ee-export-buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* Export controls use the same dropdown styling as filter dropdowns */
+.ee-export-controls .ee-filter-dropdown-group {
+    margin-bottom: 0;
+    align-items: flex-start;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
-.ee-export-buttons strong {
-    color: #1d2327;
-    font-size: 14px;
-    margin-right: 5px;
+.ee-export-controls .ee-filter-dropdown-group .ee-file-dropdown {
+    min-width: 250px;
 }
 
-.ee-export-buttons .button {
+.ee-export-controls .button {
     font-size: 13px;
     line-height: 1.4;
-    min-height: 30px;
-    padding: 4px 12px;
+    min-height: 32px;
+    padding: 6px 12px;
+    margin-left: 5px;
 }
 
 .ee-export-note {
@@ -323,20 +402,31 @@
     font-size: 12px;
     font-style: italic;
     margin-left: 10px;
+    flex-basis: 100%;
+    margin-top: 5px;
 }
 
-/* Disabled state for export buttons */
-.ee-disabled .ee-export-buttons .button {
+/* Disabled state for export controls */
+.ee-disabled .ee-export-controls .ee-file-dropdown,
+.ee-disabled .ee-export-controls .button {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
 /* Responsive export controls */
 @media (max-width: 782px) {
-    .ee-export-buttons {
+    .ee-export-controls .ee-filter-dropdown-group {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+    }
+
+    .ee-export-controls .ee-filter-dropdown-group .ee-file-dropdown {
+        min-width: 200px;
+    }
+
+    .ee-export-controls .button {
+        margin-left: 0;
     }
 
     .ee-export-note {
