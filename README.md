@@ -14,7 +14,7 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 ![Clean Interface](screenshots/Screenshot-1.jpg)
 *Clean, professional interface that integrates seamlessly with WordPress Plugin Check*
 
-### Scan Results with Real-Time Statistics
+### Add Filter, Sorting Options and Export Features to PCP
 ![Results with Stats](screenshots/Screenshot-2.jpg)
 *Live statistics display showing issues found, files affected, and error breakdown*
 
@@ -28,7 +28,7 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 
 ## � Features
 
-- Optionally excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
+- Optionally exclude system files (`.DS_Store`, `.gitignore`) from file dropdown
 
 - Optional toggle to show/hide hidden file issues in results
 
@@ -43,8 +43,6 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 - **No database changes** - zero impact on your WordPress database
 
 - **No core modifications** - doesn't alter Plugin Check plugin files
-
-- **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
 
 - **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
 
