@@ -28,7 +28,7 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 
 ## � Features
 
-- Automatically excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
+- Optionally excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
 
 - Optional toggle to show/hide hidden file issues in results
 
@@ -65,7 +65,7 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 - Eliminates confusion from irrelevant options
 
 ### 🙈 **Hidden Files Management**
-- Automatically excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
+- Optionally exclude system files (`.DS_Store`, `.gitignore`) from file dropdown
 - Optional toggle to show/hide hidden file issues in results
 - Keeps your interface clean and focused on actual code files
 
