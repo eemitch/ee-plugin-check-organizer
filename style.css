@@ -35,13 +35,73 @@
     margin: 20px 0;
     padding: 20px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    position: relative;
+}
+
+/* When positioned beside plugin selection */
+.ee-plugin-selection-with-organizer {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.ee-plugin-selection-area {
+    flex: 1;
+    min-width: 350px;
+}
+
+.ee-plugin-selection-with-organizer .ee-filter-container {
+    flex: 0 1 48%;
+    margin: 0;
+    min-width: 400px;
+    max-width: 600px;
 }
 
 .ee-filter-header h3 {
-    margin: 0 0 15px 0;
+    margin: 0 0 8px 0;
     color: #1d2327;
     font-size: 18px;
     font-weight: 600;
+}
+
+.ee-filter-subtitle {
+    margin: 0 0 15px 0;
+    color: #646970;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Inline results summary in organizer panel */
+.ee-results-summary-inline {
+    margin: 0 0 15px 0;
+}
+
+.ee-results-summary-inline .ee-summary-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #646970;
+    background: #f0f6fc;
+    border: 1px solid #c6ddf1;
+    border-radius: 3px;
+    padding: 6px 12px;
+}
+
+.ee-results-summary-inline .ee-summary-item {
+    white-space: nowrap;
+}
+
+.ee-results-summary-inline .ee-summary-item strong {
+    color: #1d2327;
+    font-weight: 600;
+}
+
+.ee-results-summary-inline .ee-summary-separator {
+    color: #a7aaad;
+    font-weight: normal;
 }
 
 /* Header Content Layout */
@@ -57,7 +117,39 @@
     flex: 0 0 auto;
 }
 
-/* Scan Summary Styles */
+/* Results Summary - appears above results table */
+.ee-results-summary {
+    margin: 20px 0 15px 0;
+    text-align: center;
+}
+
+.ee-results-summary .ee-summary-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #646970;
+    background: #f0f6fc;
+    border: 1px solid #c6ddf1;
+    border-radius: 4px;
+    padding: 8px 16px;
+}
+
+.ee-results-summary .ee-summary-item {
+    white-space: nowrap;
+}
+
+.ee-results-summary .ee-summary-item strong {
+    color: #1d2327;
+    font-weight: 600;
+}
+
+.ee-results-summary .ee-summary-separator {
+    color: #a7aaad;
+    font-weight: normal;
+}
+
+/* Scan Summary Styles (legacy - kept for any remaining usage) */
 .ee-scan-summary {
     flex: 1;
     text-align: right;
@@ -106,7 +198,18 @@
 }
 
 /* Responsive behavior for smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 782px) {
+    .ee-plugin-selection-with-organizer {
+        flex-direction: column;
+    }
+
+    .ee-plugin-selection-with-organizer .ee-filter-container {
+        flex: none;
+        width: 100%;
+        min-width: auto;
+        max-width: none;
+    }
+
     .ee-header-content {
         flex-direction: column;
         align-items: flex-start;
@@ -121,9 +224,7 @@
     .ee-summary-stats {
         flex-wrap: wrap;
     }
-}
-
-.ee-filter-description {
+}.ee-filter-description {
     margin: 0 0 15px 0;
     color: #646970;
     font-size: 14px;
@@ -245,6 +346,51 @@
     border-radius: 2px;
     font-weight: 600;
     color: #856404;
+}
+
+/* Branding link in bottom-right corner */
+.ee-branding {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 10px;
+    z-index: 10;
+}
+
+.ee-branding a {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.ee-branding a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Ensure categories table has clearfix for floating panel */
+#plugin-check__categories {
+    overflow: hidden;
+}
+
+#plugin-check__categories::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.ee-filter-container::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Results container adjustments */
+.ee-plugin-check-results {
+    clear: both;
+    margin-top: 20px;
 }
 
 /* Notice Styling */

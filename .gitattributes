@@ -1,2 +1,77 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# WordPress specific files
+*.php text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+
+# Archives
+*.zip binary
+*.tar.gz binary
+*.rar binary
+*.7z binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg text eol=lf
+*.ico binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+
+# Documents
+*.pdf binary
+*.doc binary
+*.docx binary
+
+# Development files to exclude from distribution archives
+README.md export-ignore
+TECHNICAL-DOCS.md export-ignore
+CHANGELOG.md export-ignore
+CONTRIBUTING.md export-ignore
+.github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+screenshots/ export-ignore
+
+# WordPress plugin files to include in distribution
+ee-plugin-check-organizer.php
+main.js
+style.css
+readme.txt
+LICENSE
+
+# Language files
+*.pot text eol=lf
+*.po text eol=lf
+*.mo binary
+
+# Configuration files
+.editorconfig text eol=lf
+composer.json text eol=lf
+composer.lock text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+
+# IDE and editor files (exclude from distribution)
+.vscode/ export-ignore
+.idea/ export-ignore
+*.sublime-project export-ignore
+*.sublime-workspace export-ignore
+
+# OS generated files (exclude from distribution)
+.DS_Store export-ignore
+Thumbs.db export-ignore
+desktop.ini export-ignore

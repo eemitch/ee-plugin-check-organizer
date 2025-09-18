@@ -13,7 +13,7 @@
     'use strict';
 
     // Debug Mode - Set to false for production
-    const DEBUG_MODE = true;
+    const DEBUG_MODE = false;
 
     let filterInterface = null;
     let originalResults = [];
@@ -173,11 +173,8 @@
             filterInterface.find('#ee-export-dropdown').val('');
             filterInterface.find('#ee-hide-hidden-files').prop('checked', false); // Default to showing all files
 
-            // Hide scan summary
-            filterInterface.find('#ee-scan-summary').hide();
-
-            // Update description
-            filterInterface.find('.ee-filter-description').text('Plugin check is running...');
+            // Update subtitle
+            filterInterface.find('.ee-filter-subtitle').text('Plugin check is running...');
 
             // Clear any filtered results
             filterInterface.find('#ee-filter-results').empty();
@@ -245,8 +242,8 @@
         filterInterface.find('#ee-error-type-filter').html(errorTypeOptions);
         filterInterface.find('#ee-error-code-filter').html(errorCodeOptions);
 
-        // Update description
-        filterInterface.find('.ee-filter-description').text('Filter results by file, error type, and error code:');
+        // Update subtitle
+        filterInterface.find('.ee-filter-subtitle').text('Organize and filter your plugin check results');
 
         console.log('EE Plugin Check Organizer: Filter interface enabled');
     }
@@ -255,7 +252,7 @@
      * Update the scan summary display with current results
      */
     function updateScanSummary() {
-        const summaryElement = $('#ee-scan-summary');
+        const summaryElement = $('#ee-results-summary');
         if (summaryElement.length === 0 || originalResults.length === 0) {
             return;
         }
@@ -301,7 +298,7 @@
 
         summaryHtml += `</div>`;
 
-        summaryElement.html(summaryHtml).show();
+        summaryElement.html(summaryHtml);
         debugLog('Scan summary updated:', { totalIssues, fileCount, typeCounts });
     }
 
@@ -433,13 +430,10 @@
         filterInterface = $(`
             <div id="ee-plugin-check-filter" class="ee-filter-container ${disabledClass}">
                 <div class="ee-filter-header">
-                    <div class="ee-header-content">
-                        <h3>🔍 Plugin Check Organizer</h3>
-                        <div id="ee-scan-summary" class="ee-scan-summary" style="display: none;"></div>
+                    <h3>🔍 Plugin Check Organizer</h3>
+                    <div id="ee-results-summary" class="ee-results-summary-inline">
+                        ${hasResults ? '' : 'Run a plugin check to organize and filter results'}
                     </div>
-                    <p class="ee-filter-description">
-                        ${hasResults ? 'Filter results by file, error type, and error code:' : 'Run a plugin check to organize and filter results.'}
-                    </p>
                 </div>
                 <div class="ee-filter-controls">
                     <div class="ee-filter-dropdown-group">
@@ -508,14 +502,36 @@
                         <span class="ee-export-note">(Exports currently filtered results)</span>
                     </div>
                 </div>
+                <div class="ee-branding">
+                    <a href="https://github.com/eemitch/ee-plugin-check-organizer" target="_blank" rel="noopener">eePCP</a>
+                </div>
                 <div id="ee-filter-results" class="ee-filter-results"></div>
             </div>
         `);
 
-        // Simple positioning - just put it after the categories table
-        categoriesTable.after(filterInterface);
+        // Find the main form area
+        const mainForm = categoriesTable.closest('form');
 
-        console.log('EE Plugin Check Organizer: Filter interface created and inserted');
+        if (mainForm.length > 0) {
+            // Create wrapper for the entire section
+            const wrapper = $('<div class="ee-plugin-selection-with-organizer"></div>');
+
+            // Create container for existing form content
+            const formContent = $('<div class="ee-plugin-selection-area"></div>');
+
+            // Move all form content into the selection area
+            mainForm.children().appendTo(formContent);
+
+            // Add both sections to wrapper
+            wrapper.append(formContent);
+            wrapper.append(filterInterface);
+
+            // Add wrapper to form
+            mainForm.append(wrapper);
+        } else {
+            // Fallback: simple positioning
+            categoriesTable.after(filterInterface);
+        }        console.log('EE Plugin Check Organizer: Filter interface created and inserted');
     }
 
     /**

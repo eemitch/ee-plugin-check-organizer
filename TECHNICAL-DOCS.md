@@ -1,230 +1,163 @@
 # EE Plugin Check Organizer
 
-[![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)]()
+## Documentation Goal
 
-**Enhance the WordPress Plugin Check tool with powerful filtering, sorting, and export capabilities.**
+This document provides the technical context needed for code analysis, debugging, and feature development.
 
-Transform your WordPress Plugin Check experience from overwhelming lists to organized, actionable insights. This plugin adds a sophisticated filtering interface that makes it easy to focus on what matters most in your plugin compliance review.
+## Plugin Overview
 
-## 📸 Screenshots
+**Purpose**: Enhance the WordPress Plugin Check tool with real-time filtering and export capabilities
+**Architecture**: Client-side DOM manipulation with minimal server-side integration
+**Design Philosophy**: Non-invasive enhancement that preserves original functionality
 
-### Interface Overview
-![Clean Interface](screenshots/interface-1.png)
-*Clean, professional interface that integrates seamlessly with WordPress Plugin Check*
+## Core Design Principles
 
-### Scan Results with Real-Time Statistics
-![Results with Stats](screenshots/interface-2.png)
-*Live statistics display showing issues found, files affected, and error breakdown*
+### 1. Non-Destructive Enhancement
+- **Zero modification** of Plugin Check core functionality
+- **DOM overlay approach** - adds interface elements without altering existing structure
+- **Graceful degradation** - if this plugin fails, Plugin Check continues to work normally
+- **No database dependencies** - all functionality is ephemeral and client-side
 
-### Advanced Dynamic Filtering
-![Dynamic Filtering](screenshots/interface-3.png)
-*Smart cascading filters - file and error type selections automatically update available options*
+### 2. Progressive Enhancement Pattern
+- **Detection-based initialization** - only activates when Plugin Check DOM structure is present
+- **Mutation observer pattern** - watches for dynamic content changes
+- **Event-driven architecture** - responds to Plugin Check completion events
+- **Conditional feature loading** - debug mode toggles advanced features
 
-### Export Functionality
-![Export Options](screenshots/interface-4.png)
-*Export filtered results in CSV, JSON, or TXT formats for team collaboration and analysis*
-
-## � Features
-
-- Automatically excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
-
-- Optional toggle to show/hide hidden file issues in results### 3. WordPress Integration Standards
-
-- Keeps your interface clean and focused on actual code files- **Admin-only scope** - no frontend impact
-
+### 3. WordPress Integration Standards
+- **Admin-only scope** - no frontend impact
 - **Hook-based loading** - uses WordPress action hooks (`admin_enqueue_scripts`, `admin_footer`)
+- **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
+- **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
 
-### 📈 **Advanced Sorting Options**- **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
+## Recent Enhancements (September 2025)
 
-- **Line Number** - Default numeric sorting for logical code review flow- **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
+### 🚀 **Major Feature Additions**
 
-- **Error Type** - Group by severity (ERROR → WARNING → INFO)
+1. **Dynamic Cascading Filters**
+   - Error Code dropdown now updates based on File and Error Type selections
+   - Only shows error codes that actually exist in the current filtered results
+   - Dramatically improves user experience by eliminating irrelevant options
 
-### 🔍 **Smart Triple Filtering System**
-- **File Filter** - Focus on specific plugin files
-- **Error Type Filter** - Filter by ERROR, WARNING, or INFO severity
-- **Error Code Filter** - Target specific WordPress coding standards violations
+2. **Hidden Files Management**
+   - File dropdown automatically excludes hidden files (starting with `.`)
+   - Filters out system files like `.DS_Store`, `.gitignore` from subfolders
+   - Optional "🙈 Hide Hidden Files" checkbox for result filtering
+   - Users can toggle visibility of hidden file issues in results
 
-### 📊 **Dynamic Cascading Filters**
-- Error code dropdown automatically updates based on your file and error type selections
-- Only shows error codes that actually exist in your current filtered results
-- Eliminates confusion from irrelevant options
+3. **Enhanced Sorting System**
+   - Default sorting by line number (low to high) for consistent results
+   - Removed confusing "no sorting" option for cleaner interface
+   - Maintains sort state across filter changes
 
-### 🙈 **Hidden Files Management**
-- Automatically excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
-- Optional toggle to show/hide hidden file issues in results
-- Keeps your interface clean and focused on actual code files
+4. **Improved State Management**
+   - Fixed stale data issues between Plugin Check runs
+   - Interface properly resets when new checks start
+   - Mutation observer continues watching for multiple checks
+   - No more outdated dropdown options from previous scans
 
-### � **Advanced Sorting Options**
-- **Line Number** - Default numeric sorting for logical code review flow
-- **Error Type** - Group by severity (ERROR → WARNING → INFO)
-- **Error Code** - Alphabetical sorting by WordPress coding standards
-- **File Name** - Alphabetical file organization
+5. **Non-Invasive Display Logic**
+   - Original Plugin Check results always hidden when organizer is active
+   - Consistent organized view regardless of filter combinations
+   - Maintains WordPress Plugin Check functionality as fallback
 
-### 📤 **Comprehensive Export System**
-Export your filtered results in multiple formats:
-- **CSV** - Perfect for spreadsheet analysis and sharing with teams
-- **JSON** - Structured data for programmatic analysis and AI tools
-- **TXT** - Human-readable format for documentation and reports
+### 🛠 **Technical Improvements**
 
-All exports include timestamps and active filter information.
+- **Multi-check support**: Interface resets properly between Plugin Check runs
+- **Memory management**: Clears cached data when new checks begin
+- **Event optimization**: Single mutation observer handles all check detection
+- **Filter persistence**: Smart preservation of valid selections during cascading updates
 
-### ⚡ **Performance & User Experience**
-- **Real-time filtering** - Instant results as you change filters
-- **Responsive design** - Works perfectly on desktop, tablet, and mobile
-- **Non-invasive enhancement** - Never interferes with original Plugin Check functionality
-- **Progressive enhancement** - Graceful degradation if JavaScript fails
-- **Multi-check support** - Handles multiple Plugin Check runs in the same session
+## File Architecture
 
-## 📋 Requirements
+### `functions.php` - WordPress Integration Layer
+```php
+class EE_Plugin_Check_Organizer {
+    const VERSION = '1.0.0';
 
-- **WordPress** 5.0 or higher
-- **PHP** 7.4 or higher
-- **Plugin Check Plugin** (official WordPress plugin)
-
-## 🛠 Installation
-
-### From GitHub Release
-
-1. Download the latest release ZIP file from the [Releases page](../../releases)
-2. In your WordPress admin, go to **Plugins → Add New → Upload Plugin**
-3. Choose the downloaded ZIP file and click **Install Now**
-4. Click **Activate Plugin**
-
-### Manual Installation
-
-1. Download or clone this repository
-2. Upload the `ee-plugin-check-organizer` folder to `/wp-content/plugins/`
-3. Activate the plugin through the **Plugins** menu in WordPress
-
-## 🎯 Usage
-
-1. **Install and activate** the Plugin Check plugin if you haven't already
-2. **Navigate** to **Tools → Plugin Check** in your WordPress admin
-3. **Run a plugin check** as you normally would
-4. **Wait for completion** - the organizer interface will automatically appear
-5. **Use the filters** to focus on specific issues:
-   - Select a specific file to review
-   - Choose error types (ERROR, WARNING, INFO)
-   - Pick specific error codes from the dynamic dropdown
-   - Toggle hidden files visibility as needed
-6. **Sort results** using the sorting dropdown for your preferred review order
-7. **Export results** in your preferred format for further analysis
-
-## 🔧 Technical Architecture
-
-This plugin follows WordPress best practices and modern web development standards:
-
-- **Client-side DOM manipulation** for optimal performance
-- **MutationObserver pattern** for dynamic content detection
-- **Progressive enhancement** architecture
-- **No database dependencies** - all functionality is ephemeral
-- **WordPress coding standards** compliant
-- **jQuery-based** for maximum WordPress compatibility
-
-For detailed technical documentation, see [TECHNICAL-DOCS.md](TECHNICAL-DOCS.md).
-
-**Design Pattern: WordPress Core Class Extension**
-
-We welcome contributions from the WordPress community! Here's how you can help:
-
-```css
-
-- 🐛 **Report bugs** via [GitHub Issues](../../issues)/* Extends WordPress core admin table classes */
-
-- 💡 **Suggest features** through [GitHub Issues](../../issues).ee-filter-container { /* Custom container styling */ }
-
-- 🔧 **Submit pull requests** following our [Contributing Guidelines](CONTRIBUTING.md).ee-filter-dropdown-group { /* Dropdown group styling */ }
-
-- 📖 **Improve documentation**
-
-- 🧪 **Help with testing** across different WordPress setups/* Leverages existing WordPress classes: */
-
-/* .widefat, .striped, .form-table */
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.```
-
-
-
-## 📝 Changelog## Technical Implementation Patterns
-
-
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.### 1. DOM Detection and Initialization
-
-```javascript
-
-## 📄 License// Target Element Detection
-
-const categoriesTable = $('#plugin-check__categories');
-
-This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) file for details.const resultsContainer = $('#plugin-check__results');
-
-
-
-## 💡 Why This Plugin?// Conditional Initialization
-
-if (categoriesTable.length === 0) return; // Exit if not Plugin Check page
-
-The WordPress Plugin Check tool is invaluable for ensuring compliance with WordPress.org standards, but the default output can be overwhelming. This organizer transforms that experience by:```
-
-
-
-1. **Reducing cognitive load** with smart filtering### 2. Mutation Observer Pattern for Dynamic Content
-
-2. **Enabling focused reviews** of specific issue types```javascript
-
-3. **Streamlining team collaboration** with export capabilitiesconst observer = new MutationObserver(function(mutations) {
-
-4. **Maintaining workflow efficiency** with real-time filtering    // Watch for "Checks complete" notice
-
-5. **Supporting systematic fixes** through organized presentation    // Trigger result processing when Plugin Check finishes
-
-});
-
-Perfect for:
-
-- **Plugin developers** preparing for WordPress.org submissionobserver.observe(document.body, {
-
-- **Development teams** conducting code reviews    childList: true,
-
-- **Quality assurance** professionals managing compliance    subtree: true
-
-- **WordPress agencies** maintaining plugin portfolios});
-
+    // Hooks: admin_enqueue_scripts, admin_footer
+    // Methods: enqueue_scripts(), add_filter_interface()
+    // Responsibility: WordPress lifecycle management
+}
 ```
 
-## 🆘 Support
+**Key Responsibilities:**
+- Plugin registration and metadata
+- Conditional script loading (Plugin Check pages only)
+- WordPress hook integration
+- Admin page detection (`$current_screen->id === 'tools_page_plugin-check'`)
+
+### `main.js` - Core Functionality Engine
+**Architecture Pattern: Module Pattern with IIFE**
+
+```javascript
+(function($) {
+    'use strict';
+
+    const DEBUG_MODE = true; // Production toggle
+
+    // State Management
+    let filterInterface = null;
+    let originalResults = [];
+    let allFileBlocks = [];
+
+    // Core Functions
+    window.eePluginCheckOrganizerInit = function() { /* Entry point */ };
+
+})(jQuery);
+```
+
+### `style.css` - WordPress Admin Integration Styling
+**Design Pattern: WordPress Core Class Extension**
+
+```css
+/* Extends WordPress core admin table classes */
+.ee-filter-container { /* Custom container styling */ }
+.ee-filter-dropdown-group { /* Dropdown group styling */ }
+
+/* Leverages existing WordPress classes: */
+/* .widefat, .striped, .form-table */
+```
+
+## Technical Implementation Patterns
+
+### 1. DOM Detection and Initialization
+```javascript
+// Target Element Detection
+const categoriesTable = $('#plugin-check__categories');
+const resultsContainer = $('#plugin-check__results');
+
+// Conditional Initialization
+if (categoriesTable.length === 0) return; // Exit if not Plugin Check page
+```
+
+### 2. Mutation Observer Pattern for Dynamic Content
+```javascript
+const observer = new MutationObserver(function(mutations) {
+    // Watch for "Checks complete" notice
+    // Trigger result processing when Plugin Check finishes
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+```
 
 ### 3. State Management Architecture
-
-- 📖 **Documentation**: [TECHNICAL-DOCS.md](TECHNICAL-DOCS.md)```javascript
-
-- 🐛 **Bug Reports**: [GitHub Issues](../../issues)// Original Results Storage
-
-- 💬 **Questions**: [GitHub Discussions](../../discussions)function storeOriginalResults() {
-
+```javascript
+// Original Results Storage
+function storeOriginalResults() {
     originalResults = []; // Parse and store DOM structure
-
-## 🙏 Acknowledgments    allFileBlocks = [];   // Cache file-level data
-
+    allFileBlocks = [];   // Cache file-level data
 }
 
-- WordPress Plugin Check team for the excellent foundation tool
-
-- WordPress community for coding standards and best practices// Filter Application
-
-- ElementEngage team for development and maintenancefunction applyFilters() {
-
+// Filter Application
+function applyFilters() {
     // Read current filter states
-
----    // Transform stored data based on filters
-
+    // Transform stored data based on filters
     // Regenerate DOM structure
-
-**Developed by [ElementEngage](https://elementengage.com)** | **Maintained by [@eemitch](https://github.com/eemitch)**}
+}
 ```
 
 ### 4. Triple Filter System Design
@@ -247,57 +180,108 @@ if (selectedErrorCode !== 'all') { /* Error code filtering */ }
 
 ```javascript
 // Sort State Management:
-## 🤝 Contributing
+let currentSort = { field: 'line', direction: 'asc' }; // Default to line number sorting
 
-We welcome contributions from the WordPress community! Here's how you can help:
+// Sort Field Types:
+// 1. Line Number: Numeric sorting (1, 2, 10, 45...) - DEFAULT
+// 2. Error Type: Severity-based (ERROR → WARNING → INFO)
+// 3. Error Code: Alphabetical sorting
+// 4. File Name: Alphabetical sorting
 
-- 🐛 **Report bugs** via [GitHub Issues](../../issues)
-- 💡 **Suggest features** through [GitHub Issues](../../issues)
-- 🔧 **Submit pull requests** following our [Contributing Guidelines](CONTRIBUTING.md)
-- 📖 **Improve documentation**
-- 🧪 **Help with testing** across different WordPress setups
+// Direction Toggle Logic:
+if (currentSort.field === sortField) {
+    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+} else {
+    currentSort.field = sortField;
+    currentSort.direction = 'asc';
+}
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+// Visual State Indicators:
+// - Active sort button: button-primary styling
+// - Sort direction: ↑ (asc) or ↓ (desc) in indicator
+// - Sort field name: "Sorted by Line # ↑"
+```
 
-## 📝 Changelog
+### 6. Dynamic Filtering System Design
+**Cascading Filter Architecture**: Downstream filters update based on upstream selections
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
+```javascript
+// Cascading Logic:
+// File Filter Change → Updates Error Code options
+// Error Type Filter Change → Updates Error Code options
+// Hidden Files Toggle → Updates Error Code options
+// Error Code Filter Change → Applies final filtering
 
-## 📄 License
+// Smart Option Generation:
+function updateErrorCodeDropdown() {
+    // Get currently filtered data based on File + Error Type + Hidden Files
+    let filteredData = originalResults;
+    if (selectedFile !== 'all') { /* Filter by file */ }
+    if (selectedErrorType !== 'all') { /* Filter by type */ }
+    if (hideHiddenFiles) { /* Filter out hidden files */ }
 
-This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) file for details.
+    // Generate Error Code options from filtered data only
+    const newOptions = getErrorCodeOptionsHtml(true, filteredData);
+}
+```
 
-## 💡 Why This Plugin?
+### 7. Hidden Files Management System
+**Smart File Detection**: Identifies hidden files regardless of path depth
 
-The WordPress Plugin Check tool is invaluable for ensuring compliance with WordPress.org standards, but the default output can be overwhelming. This organizer transforms that experience by:
+```javascript
+// Hidden File Detection:
+function isHiddenFile(filePath) {
+    const actualFileName = filePath.split('/').pop();
+    return actualFileName.startsWith('.');
+}
 
-1. **Reducing cognitive load** with smart filtering
-2. **Enabling focused reviews** of specific issue types
-3. **Streamlining team collaboration** with export capabilities
-4. **Maintaining workflow efficiency** with real-time filtering
-5. **Supporting systematic fixes** through organized presentation
+// Examples:
+// '.DS_Store' → Hidden ✓
+// 'languages/.DS_Store' → Hidden ✓
+// 'includes/.gitignore' → Hidden ✓
+// 'readme.txt' → Not Hidden ✗
+```
+// 4. File Name: Alphabetical sorting
 
-Perfect for:
-- **Plugin developers** preparing for WordPress.org submission
-- **Development teams** conducting code reviews
-- **Quality assurance** professionals managing compliance
-- **WordPress agencies** maintaining plugin portfolios
+// Direction Toggle Logic:
+if (currentSort.field === sortField) {
+    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+} else {
+    currentSort.field = sortField;
+    currentSort.direction = 'asc';
+}
 
-## 🆘 Support
+// Visual State Indicators:
+// - Active sort button: button-primary styling
+// - Sort direction: ↑ (asc) or ↓ (desc) in indicator
+// - Sort field name: "Sorted by Line # ↑"
+```
 
-- 📖 **Documentation**: [TECHNICAL-DOCS.md](TECHNICAL-DOCS.md)
-- 🐛 **Bug Reports**: [GitHub Issues](../../issues)
-- 💬 **Questions**: [GitHub Discussions](../../discussions)
+## Data Flow Architecture
 
-## 🙏 Acknowledgments
+### 1. Initialization Flow
+```
+WordPress Page Load
+→ functions.php enqueue_scripts()
+→ main.js loaded
+→ eePluginCheckOrganizerInit() called
+→ DOM detection
+→ Filter interface creation
+→ Event binding
+→ Mutation observer setup
+```
 
-- WordPress Plugin Check team for the excellent foundation tool
-- WordPress community for coding standards and best practices
-- ElementEngage team for development and maintenance
-
----
-
-**Developed by [ElementEngage](https://elementengage.com)** | **Maintained by [@eemitch](https://github.com/eemitch)**
+### 2. Plugin Check Execution Flow (Enhanced)
+```
+User runs Plugin Check
+→ resetInterface() clears previous data and resets UI
+→ MutationObserver detects "Checks complete"
+→ refreshResults() triggered
+→ storeOriginalResults() parses DOM (excludes hidden files from dropdowns)
+→ enableFilterInterface() activates filters
+→ Filter dropdowns populated with actual data
+→ Default sort applied (line number ascending)
+```
 
 ### 3. Cascading Filter Update Flow (NEW)
 ```
