@@ -11,19 +11,19 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 ## 📸 Screenshots
 
 ### Interface Overview
-![Clean Interface](screenshots/interface-1.png)
+![Clean Interface](screenshots/Screenshot-1.jpg)
 *Clean, professional interface that integrates seamlessly with WordPress Plugin Check*
 
 ### Scan Results with Real-Time Statistics
-![Results with Stats](screenshots/interface-2.png)
+![Results with Stats](screenshots/Screenshot-2.jpg)
 *Live statistics display showing issues found, files affected, and error breakdown*
 
 ### Advanced Dynamic Filtering
-![Dynamic Filtering](screenshots/interface-3.png)
+![Dynamic Filtering](screenshots/Screenshot-3.jpg)
 *Smart cascading filters - file and error type selections automatically update available options*
 
 ### Export Functionality
-![Export Options](screenshots/interface-4.png)
+![Export Options](screenshots/Screenshot-4.jpg)
 *Export filtered results in CSV, JSON, or TXT formats for team collaboration and analysis*
 
 ## � Features
