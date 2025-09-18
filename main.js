@@ -163,6 +163,7 @@
             filterInterface.addClass('ee-disabled');
             filterInterface.find('select').prop('disabled', true);
             filterInterface.find('button').prop('disabled', true);
+            filterInterface.find('input[type="checkbox"]').prop('disabled', true);
 
             // Reset dropdowns to default options
             filterInterface.find('#ee-file-filter').html('<option value="all">All Files</option>');
@@ -170,6 +171,7 @@
             filterInterface.find('#ee-error-code-filter').html('<option value="all">All Error Codes</option>');
             filterInterface.find('#ee-sort-dropdown').val('line-asc');
             filterInterface.find('#ee-export-dropdown').val('');
+            filterInterface.find('#ee-hide-hidden-files').prop('checked', false); // Default to showing all files
 
             // Hide scan summary
             filterInterface.find('#ee-scan-summary').hide();
@@ -230,8 +232,9 @@
         filterInterface.find('#ee-export-dropdown').prop('disabled', false);
         filterInterface.find('#ee-export-go').prop('disabled', false);
 
-        // Enable sort dropdown
+        // Enable sort dropdown and hidden files checkbox
         filterInterface.find('#ee-sort-dropdown').prop('disabled', false);
+        filterInterface.find('#ee-hide-hidden-files').prop('disabled', false);
 
         // Update dropdown options with current data
         const fileOptions = getFileOptionsHtml(true);
@@ -464,6 +467,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="ee-display-controls">
+                    <div class="ee-filter-dropdown-group">
+                        <label class="ee-checkbox-label">
+                            <input type="checkbox" id="ee-hide-hidden-files" ${disabledAttr}>
+                            <strong>🙈 Hide Hidden Files</strong>
+                            <span class="ee-checkbox-note">(Files starting with . like .DS_Store, .gitignore)</span>
+                        </label>
+                    </div>
+                </div>
                 <div class="ee-sort-controls">
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-sort-dropdown" class="ee-dropdown-label">
@@ -563,17 +575,22 @@
 
     /**
      * Get HTML options for error code dropdown
+     * @param {boolean} hasResults - Whether results are available
+     * @param {Array} filteredData - Optional filtered data to use instead of originalResults
      */
-    function getErrorCodeOptionsHtml(hasResults) {
+    function getErrorCodeOptionsHtml(hasResults, filteredData = null) {
         console.log('EE Plugin Check Organizer: Getting error code options, hasResults:', hasResults);
 
         if (!hasResults || originalResults.length === 0) {
             return '<option value="all">All Error Codes</option>';
         }
 
-        // Get unique error codes from our organized data
+        // Use filtered data if provided, otherwise use original results
+        const dataToUse = filteredData || originalResults;
+
+        // Get unique error codes from the data
         const codeCounts = {};
-        originalResults.forEach(issue => {
+        dataToUse.forEach(issue => {
             // Extract the main error code (without subcomponents for cleaner grouping)
             const mainCode = issue.code.split('.').slice(0, 3).join('.');
             codeCounts[mainCode] = (codeCounts[mainCode] || 0) + 1;
@@ -589,6 +606,54 @@
 
         console.log('EE Plugin Check Organizer: Generated error code options:', errorCodes);
         return errorCodes.join('');
+    }
+
+    /**
+     * Update Error Code dropdown based on current File and Error Type filters
+     */
+    function updateErrorCodeDropdown() {
+        const selectedFile = $('#ee-file-filter').val();
+        const selectedErrorType = $('#ee-error-type-filter').val();
+        const selectedErrorCode = $('#ee-error-code-filter').val();
+        const hideHiddenFiles = $('#ee-hide-hidden-files').is(':checked');
+
+        // Get filtered data based on current File and Error Type selections
+        let filteredData = originalResults;
+
+        if (selectedFile !== 'all') {
+            filteredData = filteredData.filter(issue => issue.fileName === selectedFile);
+        }
+
+        if (selectedErrorType !== 'all') {
+            filteredData = filteredData.filter(issue => issue.type === selectedErrorType);
+        }
+
+        // Filter out hidden files if checkbox is checked
+        if (hideHiddenFiles) {
+            filteredData = filteredData.filter(issue => {
+                const actualFileName = issue.fileName.split('/').pop();
+                return !actualFileName.startsWith('.');
+            });
+        }        // Generate new Error Code options based on filtered data
+        const newErrorCodeOptions = getErrorCodeOptionsHtml(true, filteredData);
+
+        // Update the dropdown
+        const errorCodeDropdown = $('#ee-error-code-filter');
+        errorCodeDropdown.html(newErrorCodeOptions);
+
+        // Try to preserve the selected error code if it still exists in filtered data
+        const availableCodes = filteredData.map(issue => {
+            return issue.code.split('.').slice(0, 3).join('.');
+        });
+        const uniqueAvailableCodes = [...new Set(availableCodes)];
+
+        if (selectedErrorCode && selectedErrorCode !== 'all' && uniqueAvailableCodes.includes(selectedErrorCode)) {
+            errorCodeDropdown.val(selectedErrorCode);
+        } else {
+            errorCodeDropdown.val('all');
+        }
+
+        debugLog('Updated Error Code dropdown with', uniqueAvailableCodes.length, 'available codes');
     }    /**
      * Bind filter events
      */
@@ -600,8 +665,14 @@
         const errorCodeDropdown = $('#ee-error-code-filter');
 
         // Dropdown change events - trigger filtering when any dropdown changes
-        fileDropdown.on('change', applyFilters);
-        errorTypeDropdown.on('change', applyFilters);
+        fileDropdown.on('change', function() {
+            updateErrorCodeDropdown(); // Update Error Code options based on new File selection
+            applyFilters();
+        });
+        errorTypeDropdown.on('change', function() {
+            updateErrorCodeDropdown(); // Update Error Code options based on new Error Type selection
+            applyFilters();
+        });
         errorCodeDropdown.on('change', applyFilters);
 
         // Sort dropdown change event
@@ -615,6 +686,12 @@
                 currentSort = { field: 'line', direction: 'asc' };
                 applyFilters();
             }
+        });
+
+        // Hidden files checkbox change event
+        $('#ee-hide-hidden-files').on('change', function() {
+            updateErrorCodeDropdown(); // Update Error Code options when hidden file visibility changes
+            applyFilters();
         });
 
         // Export Go button event
@@ -692,23 +769,17 @@
         const selectedFile = $('#ee-file-filter').val();
         const selectedErrorType = $('#ee-error-type-filter').val();
         const selectedErrorCode = $('#ee-error-code-filter').val();
+        const hideHiddenFiles = $('#ee-hide-hidden-files').is(':checked');
 
-        console.log('EE Plugin Check Organizer: Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode);
+        console.log('EE Plugin Check Organizer: Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode, 'Hide Hidden:', hideHiddenFiles);
 
         // Remove any existing filtered results
         $('#ee-filtered-results').remove();
 
-        if (selectedFile === 'all' && selectedErrorType === 'all' && selectedErrorCode === 'all') {
-            // Show all original results
-            $('#plugin-check__results').show();
-            console.log('EE Plugin Check Organizer: Showing all results');
-            return;
-        }
-
-        // Hide original results
+        // Always hide original results when using the organizer - we'll show our organized version
         $('#plugin-check__results').hide();
 
-        // Filter issues based on both criteria
+        // Filter issues based on all criteria
         let filteredIssues = originalResults;
 
         if (selectedFile !== 'all') {
@@ -724,6 +795,14 @@
             filteredIssues = filteredIssues.filter(issue => {
                 const mainCode = issue.code.split('.').slice(0, 3).join('.');
                 return mainCode === selectedErrorCode;
+            });
+        }
+
+        // Filter out hidden files if checkbox is checked
+        if (hideHiddenFiles) {
+            filteredIssues = filteredIssues.filter(issue => {
+                const actualFileName = issue.fileName.split('/').pop();
+                return !actualFileName.startsWith('.');
             });
         }
 

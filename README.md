@@ -30,6 +30,44 @@ This document provides the technical context needed for code analysis, debugging
 - **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
 - **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
 
+## Recent Enhancements (September 2025)
+
+### 🚀 **Major Feature Additions**
+
+1. **Dynamic Cascading Filters**
+   - Error Code dropdown now updates based on File and Error Type selections
+   - Only shows error codes that actually exist in the current filtered results
+   - Dramatically improves user experience by eliminating irrelevant options
+
+2. **Hidden Files Management**
+   - File dropdown automatically excludes hidden files (starting with `.`)
+   - Filters out system files like `.DS_Store`, `.gitignore` from subfolders
+   - Optional "🙈 Hide Hidden Files" checkbox for result filtering
+   - Users can toggle visibility of hidden file issues in results
+
+3. **Enhanced Sorting System**
+   - Default sorting by line number (low to high) for consistent results
+   - Removed confusing "no sorting" option for cleaner interface
+   - Maintains sort state across filter changes
+
+4. **Improved State Management**
+   - Fixed stale data issues between Plugin Check runs
+   - Interface properly resets when new checks start
+   - Mutation observer continues watching for multiple checks
+   - No more outdated dropdown options from previous scans
+
+5. **Non-Invasive Display Logic**
+   - Original Plugin Check results always hidden when organizer is active
+   - Consistent organized view regardless of filter combinations
+   - Maintains WordPress Plugin Check functionality as fallback
+
+### 🛠 **Technical Improvements**
+
+- **Multi-check support**: Interface resets properly between Plugin Check runs
+- **Memory management**: Clears cached data when new checks begin
+- **Event optimization**: Single mutation observer handles all check detection
+- **Filter persistence**: Smart preservation of valid selections during cascading updates
+
 ## File Architecture
 
 ### `functions.php` - WordPress Integration Layer
@@ -138,16 +176,71 @@ if (selectedErrorCode !== 'all') { /* Error code filtering */ }
 ```
 
 ### 5. Sorting System Design
-**Stateful Sort Architecture**: Maintains sort field and direction with toggle behavior
+**Stateful Sort Architecture**: Maintains sort field and direction with default line number sorting
 
 ```javascript
 // Sort State Management:
-let currentSort = { field: null, direction: 'asc' };
+let currentSort = { field: 'line', direction: 'asc' }; // Default to line number sorting
 
 // Sort Field Types:
-// 1. Line Number: Numeric sorting (1, 2, 10, 45...)
+// 1. Line Number: Numeric sorting (1, 2, 10, 45...) - DEFAULT
 // 2. Error Type: Severity-based (ERROR → WARNING → INFO)
 // 3. Error Code: Alphabetical sorting
+// 4. File Name: Alphabetical sorting
+
+// Direction Toggle Logic:
+if (currentSort.field === sortField) {
+    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+} else {
+    currentSort.field = sortField;
+    currentSort.direction = 'asc';
+}
+
+// Visual State Indicators:
+// - Active sort button: button-primary styling
+// - Sort direction: ↑ (asc) or ↓ (desc) in indicator
+// - Sort field name: "Sorted by Line # ↑"
+```
+
+### 6. Dynamic Filtering System Design
+**Cascading Filter Architecture**: Downstream filters update based on upstream selections
+
+```javascript
+// Cascading Logic:
+// File Filter Change → Updates Error Code options
+// Error Type Filter Change → Updates Error Code options
+// Hidden Files Toggle → Updates Error Code options
+// Error Code Filter Change → Applies final filtering
+
+// Smart Option Generation:
+function updateErrorCodeDropdown() {
+    // Get currently filtered data based on File + Error Type + Hidden Files
+    let filteredData = originalResults;
+    if (selectedFile !== 'all') { /* Filter by file */ }
+    if (selectedErrorType !== 'all') { /* Filter by type */ }
+    if (hideHiddenFiles) { /* Filter out hidden files */ }
+
+    // Generate Error Code options from filtered data only
+    const newOptions = getErrorCodeOptionsHtml(true, filteredData);
+}
+```
+
+### 7. Hidden Files Management System
+**Smart File Detection**: Identifies hidden files regardless of path depth
+
+```javascript
+// Hidden File Detection:
+function isHiddenFile(filePath) {
+    const actualFileName = filePath.split('/').pop();
+    return actualFileName.startsWith('.');
+}
+
+// Examples:
+// '.DS_Store' → Hidden ✓
+// 'languages/.DS_Store' → Hidden ✓
+// 'includes/.gitignore' → Hidden ✓
+// 'readme.txt' → Not Hidden ✗
+```
 // 4. File Name: Alphabetical sorting
 
 // Direction Toggle Logic:
@@ -178,27 +271,45 @@ WordPress Page Load
 → Mutation observer setup
 ```
 
-### 2. Plugin Check Execution Flow
+### 2. Plugin Check Execution Flow (Enhanced)
 ```
 User runs Plugin Check
+→ resetInterface() clears previous data and resets UI
 → MutationObserver detects "Checks complete"
 → refreshResults() triggered
-→ storeOriginalResults() parses DOM
+→ storeOriginalResults() parses DOM (excludes hidden files from dropdowns)
 → enableFilterInterface() activates filters
 → Filter dropdowns populated with actual data
+→ Default sort applied (line number ascending)
 ```
 
-### 3. Filter Application Flow
+### 3. Cascading Filter Update Flow (NEW)
 ```
-User selects filter option
+User changes File or Error Type filter
+→ updateErrorCodeDropdown() triggered
+→ Filters originalResults by current File + Error Type + Hidden Files setting
+→ Generates new Error Code options from filtered data only
+→ Preserves existing Error Code selection if still valid
+→ Triggers applyFilters() to update display
+```
+
+### 4. Filter Application Flow (Enhanced)
+```
+User selects filter option or toggles hidden files
 → applyFilters() triggered
-→ Data filtered based on selections
-→ createFilteredResultsByFile() generates new structure
+→ Always hides original Plugin Check results
+→ Data filtered based on all selections:
+   - File filter
+   - Error Type filter
+   - Error Code filter
+   - Hidden files checkbox
+→ Sorting applied (default: line number ascending)
+→ createFilteredResultsByFile() generates organized structure
 → DOM updated with filtered results
 → WordPress table classes applied
 ```
 
-### 4. Export Flow
+### 5. Export Flow
 ```
 User clicks export button (CSV/JSON/TXT)
 → exportResults() triggered with format parameter
@@ -471,4 +582,27 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add
 5. Validate WordPress coding standards compliance
 6. Test responsive behavior
 7. Verify no console errors in production mode
+
+### Current Status (September 2025)
+
+**Stability**: Production-ready with comprehensive enhancements
+**Features**: All major functionality implemented and tested
+**Performance**: Optimized for multiple Plugin Check runs and large result sets
+**Compatibility**: Works with all WordPress Plugin Check versions
+
+**Key Improvements Completed**:
+- ✅ Dynamic cascading filters
+- ✅ Hidden files management
+- ✅ Enhanced sorting with sensible defaults
+- ✅ Robust state management
+- ✅ Non-invasive display architecture
+- ✅ Multi-check session support
+
+**Next Phase**: Focus shifts to using the organizer for systematic WordPress plugin compliance fixes.
+
+---
+
+**Last Updated**: September 18, 2025
+**Status**: Ready for production use
+**Maintained By**: ElementEngage Development Team
 
