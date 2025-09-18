@@ -516,9 +516,14 @@
             return '<option value="all">All Files</option>';
         }
 
-        // Get unique filenames from our organized data
-        const uniqueFiles = [...new Set(originalResults.map(issue => issue.fileName))];
-        console.log('EE Plugin Check Organizer: Unique files found:', uniqueFiles);
+        // Get unique filenames from our organized data, excluding hidden files
+        const uniqueFiles = [...new Set(originalResults.map(issue => issue.fileName))]
+            .filter(fileName => {
+                // Extract just the filename part (after last slash) and check if it starts with .
+                const actualFileName = fileName.split('/').pop();
+                return !actualFileName.startsWith('.');
+            });
+        console.log('EE Plugin Check Organizer: Unique files found (excluding hidden):', uniqueFiles);
 
         const files = ['<option value="all">All Files</option>'];
         uniqueFiles.forEach(function(fileName) {
