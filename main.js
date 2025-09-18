@@ -18,7 +18,7 @@
     let filterInterface = null;
     let originalResults = [];
     let allFileBlocks = [];
-    let currentSort = { field: null, direction: 'asc' }; // Sorting state
+    let currentSort = { field: 'line', direction: 'asc' }; // Default sorting by line number
 
     /**
      * Debug console logging - only when DEBUG_MODE is true
@@ -53,6 +53,12 @@
         // Watch for the "Checks complete" notice to appear
         watchForCheckComplete();
 
+        // Watch for "Check It!" button clicks to reset interface immediately
+        $(document).on('click', '#plugin-check-form input[type="submit"]', function() {
+            console.log('EE Plugin Check Organizer: Check It button clicked, resetting interface');
+            resetInterface();
+        });
+
         // Add utility functions to the global scope
         window.eePluginCheckOrganizer = {
             refreshResults: refreshResults,
@@ -78,8 +84,8 @@
             window.eePluginCheckOrganizer.sortByTypeAsc = function() { applySortFromDropdown('type', 'asc'); };
             window.eePluginCheckOrganizer.sortByTypeDesc = function() { applySortFromDropdown('type', 'desc'); };
             window.eePluginCheckOrganizer.clearSort = function() {
-                currentSort = { field: null, direction: 'asc' };
-                $('#ee-sort-dropdown').val('');
+                currentSort = { field: 'line', direction: 'asc' };
+                $('#ee-sort-dropdown').val('line-asc');
                 applyFilters();
             };
             debugLog('Debug mode enabled - testScan(), export, and sort functions available');
@@ -94,13 +100,20 @@
     function watchForCheckComplete() {
         console.log('EE Plugin Check Organizer: Setting up check complete watcher');
 
-        // Use MutationObserver to watch for the completion notice
+        // Use MutationObserver to watch for both start and completion
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 mutation.addedNodes.forEach(function(node) {
                     if (node.nodeType === 1) {
-                        // Check if this node or any of its children contains the completion notice
                         const $node = $(node);
+
+                        // Check for Plugin Check starting (results being cleared)
+                        if ($node.find('#plugin-check__results').length > 0 || $node.attr('id') === 'plugin-check__results') {
+                            console.log('EE Plugin Check Organizer: Plugin Check starting, resetting interface');
+                            resetInterface();
+                        }
+
+                        // Check if this node or any of its children contains the completion notice
                         const completionNotice = $node.find('.notice p').filter(function() {
                             return $(this).text().includes('Checks complete');
                         });
@@ -118,8 +131,7 @@
                                 refreshResults();
                             }, 500);
 
-                            // Stop watching once we've detected completion
-                            observer.disconnect();
+                            // Keep watching for subsequent checks - don't disconnect
                         }
                     }
                 });
@@ -133,6 +145,44 @@
         });
 
         console.log('EE Plugin Check Organizer: Check complete watcher active');
+    }
+
+    /**
+     * Reset the interface when a new Plugin Check starts
+     */
+    function resetInterface() {
+        console.log('EE Plugin Check Organizer: Resetting interface for new check');
+
+        // Clear previous data
+        originalResults = [];
+        allFileBlocks = [];
+        currentSort = { field: 'line', direction: 'asc' }; // Reset to default line number sorting
+
+        // Reset interface to disabled state
+        if (filterInterface) {
+            filterInterface.addClass('ee-disabled');
+            filterInterface.find('select').prop('disabled', true);
+            filterInterface.find('button').prop('disabled', true);
+
+            // Reset dropdowns to default options
+            filterInterface.find('#ee-file-filter').html('<option value="all">All Files</option>');
+            filterInterface.find('#ee-error-type-filter').html('<option value="all">All Error Types</option>');
+            filterInterface.find('#ee-error-code-filter').html('<option value="all">All Error Codes</option>');
+            filterInterface.find('#ee-sort-dropdown').val('line-asc');
+            filterInterface.find('#ee-export-dropdown').val('');
+
+            // Hide scan summary
+            filterInterface.find('#ee-scan-summary').hide();
+
+            // Update description
+            filterInterface.find('.ee-filter-description').text('Plugin check is running...');
+
+            // Clear any filtered results
+            filterInterface.find('#ee-filter-results').empty();
+        }
+
+        // Remove any debug output
+        $('#ee-debug-output').remove();
     }
 
     /**
@@ -420,8 +470,7 @@
                             <strong>🔀 Sort Results:</strong>
                         </label>
                         <select id="ee-sort-dropdown" class="ee-file-dropdown" ${disabledAttr}>
-                            <option value="">No sorting</option>
-                            <option value="line-asc">Line # (Low to High)</option>
+                            <option value="line-asc" selected>Line # (Low to High)</option>
                             <option value="line-desc">Line # (High to Low)</option>
                             <option value="type-asc">Error Type (ERROR → WARNING → INFO)</option>
                             <option value="type-desc">Error Type (INFO → WARNING → ERROR)</option>
@@ -557,8 +606,8 @@
                 const [field, direction] = sortValue.split('-');
                 applySortFromDropdown(field, direction);
             } else {
-                // Clear sorting
-                currentSort = { field: null, direction: 'asc' };
+                // Reset to default sorting
+                currentSort = { field: 'line', direction: 'asc' };
                 applyFilters();
             }
         });
