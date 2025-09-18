@@ -1,4 +1,4 @@
-# EE Plugin Check Organizer
+# EE Plugin Check (PCP) Organizer
 
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
