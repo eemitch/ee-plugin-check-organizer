@@ -1,6 +1,6 @@
 === EE Plugin Check Organizer ===
-Contributors: elementengage
-Tags: plugin-check, development, debugging, organization, filtering
+Contributors: eemitch
+Tags: plugin-check, development, debugging, organization, filtering, export
 Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enhance the WordPress Plugin Check tool with powerful filtering and organization capabilities.
+Enhance the WordPress Plugin Check tool with powerful filtering, sorting, and export capabilities.
 
 == Description ==
 
@@ -16,14 +16,17 @@ Enhance the WordPress Plugin Check tool with powerful filtering and organization
 
 = Key Features =
 
-* **Triple Dropdown Filtering** - Three independent dropdown filters for precise result organization
+* **Triple Dropdown Filtering** - File, Error Type, and Error Code filters
+* **Export Capabilities** - Export filtered results in CSV, JSON, or TXT formats
+* **Non-Invasive DOM Approach** - Pure DOM manipulation, no database changes
+* **Real-time Statistics** - Live stats panel showing issue counts and breakdown
 * **File-Based Filtering** - Filter results by specific files in your plugin
 * **Error Type Filtering** - Filter by error severity (ERROR, WARNING, INFO)
 * **Error Code Filtering** - Filter by specific WordPress coding standard error codes
+* **Dynamic Cascading Filters** - Smart filter updates based on available data
 * **Real-time Results** - Instant filtering as you select different options
-* **WordPress Admin Integration** - Seamlessly integrates with the existing Plugin Check interface
+* **WordPress Admin Integration** - Seamlessly integrates with existing Plugin Check interface
 * **Responsive Design** - Works perfectly on desktop, tablet, and mobile devices
-* **No Database Changes** - Works entirely with the existing Plugin Check DOM structure
 
 = How It Works =
 
@@ -99,12 +102,10 @@ The plugin is designed to gracefully handle DOM changes. If the structure change
 
 == Screenshots ==
 
-1. The triple dropdown filter interface above Plugin Check results
-2. File filter dropdown showing available files
-3. Error type filter dropdown (ERROR, WARNING, INFO)
-4. Error code filter dropdown with WordPress coding standards
-5. Combined filtering in action showing filtered results
-6. Mobile-responsive filter layout
+1. Standard Plugin Check interface before enhancement
+2. Plugin selection dropdown in action
+3. Enhanced interface with organizer panel and real-time statistics
+4. Organized and filtered results view with export options
 
 == Changelog ==
 
@@ -126,16 +127,9 @@ Initial release of EE Plugin Check Organizer. Adds powerful triple dropdown filt
 
 = Hooks and Filters =
 
-This plugin uses the following WordPress hooks:
-* `admin_enqueue_scripts` - To load JavaScript and CSS on Plugin Check pages
+This plugin uses standard WordPress hooks for admin-only loading:
+* `admin_enqueue_scripts` - To load JavaScript and CSS on Plugin Check pages only
 * `admin_footer` - To initialize the filtering interface
-
-= JavaScript API =
-
-The plugin exposes a global JavaScript object `window.eePluginCheckOrganizer` with the following methods:
-* `applyFilters()` - Applies current filter selections to results
-* `resetFilters()` - Resets all filters to show all results
-* `debugLog(message)` - Logs debug messages when debug mode is enabled
 
 = CSS Classes =
 
