@@ -30,15 +30,27 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 
 - Automatically excludes system files (`.DS_Store`, `.gitignore`) from file dropdown
 
-- Optional toggle to show/hide hidden file issues in results### 3. WordPress Integration Standards
+- Optional toggle to show/hide hidden file issues in results
 
-- Keeps your interface clean and focused on actual code files- **Admin-only scope** - no frontend impact
+### 🎯 **Non-Invasive DOM-Only Approach**
 
-- **Hook-based loading** - uses WordPress action hooks (`admin_enqueue_scripts`, `admin_footer`)
+- Keeps your interface clean and focused on actual code files
 
-### 📈 **Advanced Sorting Options**- **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
+- **Admin-only scope** - no frontend impact
 
-- **Line Number** - Default numeric sorting for logical code review flow- **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
+- **Pure DOM manipulation** - works entirely with existing Plugin Check interface elements
+
+- **No database changes** - zero impact on your WordPress database
+
+- **No core modifications** - doesn't alter Plugin Check plugin files
+
+- **Namespaced globals** - exposes `window.eePluginCheckOrganizer` API
+
+- **Core styling integration** - leverages WordPress admin CSS classes (`widefat`, `striped`)
+
+### 📈 **Advanced Sorting Options**
+
+- **Line Number** - Default numeric sorting for logical code review flow
 
 - **Error Type** - Group by severity (ERROR → WARNING → INFO)
 
