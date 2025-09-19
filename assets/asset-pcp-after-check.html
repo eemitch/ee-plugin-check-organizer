@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html class="wp-toolbar"
+	lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Plugin Check &lsaquo; SFL PRO DEV LOCAL &#8212; WordPress</title>
+<script type="text/javascript">
+addLoadEvent = function(func){if(typeof jQuery!=='undefined')jQuery(function(){func();});else if(typeof wpOnload!=='function'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};
+var ajaxurl = '/wp-admin/admin-ajax.php',
+	pagenow = 'tools_page_plugin-check',
+	typenow = '',
+	adminpage = 'tools_page_plugin-check',
+	thousandsSeparator = ',',
+	decimalPoint = '.',
+	isRtl = 0;
+</script>
+<link rel='stylesheet' href='https://dev2:8890/wp-admin/load-styles.php?c=1&amp;dir=ltr&amp;load%5Bchunk_0%5D=dashicons,admin-bar,common,forms,admin-menu,dashboard,list-tables,edit,revisions,media,themes,about,nav-menus,wp-pointer,widgets&amp;load%5Bchunk_1%5D=,site-icon,l10n,buttons,wp-auth-check&amp;ver=6.8.2' media='all' />
+<style>
+@media print { #wpadminbar { display:none; } }
+</style>
+<link rel='stylesheet' id='ee-plugin-check-organizer-css' href='https://dev2:8890/wp-content/plugins/ee-plugin-check-organizer/style.css?ver=1.0.0' media='all' />
+<style id='wp-emoji-styles-inline-css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<link rel='stylesheet' id='plugin-check-admin-css' href='https://dev2:8890/wp-content/plugins/plugin-check/assets/css/plugin-check-admin.css?ver=1.6.0' media='all' />
+<script>
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/dev2:8890\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.8.2"}};
+/*! This file is auto-generated */
+!function(s,n){var o,i,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),a=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===a[t]})}function u(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);for(var n=e.getImageData(16,16,1,1),a=0;a<n.data.length;a++)if(0!==n.data[a])return!1;return!0}function f(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\udedf")}return!1}function g(e,t,n,a){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):s.createElement("canvas"),o=r.getContext("2d",{willReadFrequently:!0}),i=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(function(e){i[e]=t(o,e,n,a)}),i}function t(e){var t=s.createElement("script");t.src=e,t.defer=!0,s.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",i=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){s.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+g.toString()+"("+[JSON.stringify(i),f.toString(),p.toString(),u.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"}),r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=function(e){c(n=e.data),r.terminate(),t(n)})}catch(e){}c(n=g(i,f,p,u))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);
+</script>
+
+<script>
+/* <![CDATA[ */
+var userSettings = {"url":"\/","uid":"1","time":"1758313920","secure":"1"};/* ]]> */
+</script>
+<script src='https://dev2:8890/wp-admin/load-scripts.php?c=1&amp;load%5Bchunk_0%5D=jquery-core,jquery-migrate,utils&amp;ver=6.8.2'></script>
+<script>
+		jQuery(document).ready(function() {
+			jQuery('#toplevel_page_ee-simple-file-list').remove();
+		});
+	</script>
+	<style type='text/css'>
+	#dolly {
+		float: right;
+		padding: 5px 10px;
+		margin: 0;
+		font-size: 12px;
+		line-height: 1.6666;
+	}
+	.rtl #dolly {
+		float: left;
+	}
+	.block-editor-page #dolly {
+		display: none;
+	}
+	@media screen and (max-width: 782px) {
+		#dolly,
+		.rtl #dolly {
+			float: none;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+	</style>
+	<script type="text/javascript">var _wpColorScheme = {"icons":{"base":"#a7aaad","focus":"#72aee6","current":"#fff"}};</script>
+	<link id="wp-admin-canonical" rel="canonical" href="https://dev2:8890/wp-admin/tools.php?page=plugin-check" />
+	<script>
+		if ( window.history.replaceState ) {
+			window.history.replaceState( null, null, document.getElementById( 'wp-admin-canonical' ).href + window.location.hash );
+		}
+	</script>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body class="wp-admin wp-core-ui no-js tools_page_plugin-check auto-fold admin-bar branch-6-8 version-6-8-2 admin-color-fresh locale-en-us no-customize-support svg wp-theme-generatepress">
+<script type="text/javascript">
+	document.body.className = document.body.className.replace('no-js','js');
+</script>
+
+<script>
+		(function() {
+			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+				request = true;
+
+			b[c] = b[c].replace( rcs, ' ' );
+			// The customizer requires postMessage and CORS (if the site is cross domain).
+			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+		}());
+
+</script>
+
+<div id="wpwrap">
+
+<div id="adminmenumain" role="navigation" aria-label="Main menu">
+<a href="#wpbody-content" class="screen-reader-shortcut">Skip to main content</a>
+<a href="#wp-toolbar" class="screen-reader-shortcut">Skip to toolbar</a>
+<div id="adminmenuback"></div>
+<div id="adminmenuwrap">
+<ul id="adminmenu">
+
+
+	<li class="wp-first-item wp-has-submenu wp-not-current-submenu menu-top menu-top-first menu-icon-dashboard menu-top-last" id="menu-dashboard">
+	<a href='index.php' class="wp-first-item wp-has-submenu wp-not-current-submenu menu-top menu-top-first menu-icon-dashboard menu-top-last" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-dashboard' aria-hidden='true'><br /></div><div class='wp-menu-name'>Dashboard</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Dashboard</li><li class="wp-first-item"><a href='index.php' class="wp-first-item">Home</a></li><li><a href='update-core.php'>Updates <span class="update-plugins count-0"><span class="update-count">0</span></span></a></li></ul></li>
+	<li class="wp-not-current-submenu wp-menu-separator" aria-hidden="true"><div class="separator"></div></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-post open-if-no-js menu-top-first" id="menu-posts">
+	<a href='edit.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-post open-if-no-js menu-top-first" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-post' aria-hidden='true'><br /></div><div class='wp-menu-name'>Posts</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Posts</li><li class="wp-first-item"><a href='edit.php' class="wp-first-item">All Posts</a></li><li><a href='post-new.php'>Add Post</a></li><li><a href='edit-tags.php?taxonomy=category'>Categories</a></li><li><a href='edit-tags.php?taxonomy=post_tag'>Tags</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-media" id="menu-media">
+	<a href='upload.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-media" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-media' aria-hidden='true'><br /></div><div class='wp-menu-name'>Media</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Media</li><li class="wp-first-item"><a href='upload.php' class="wp-first-item">Library</a></li><li><a href='media-new.php'>Add Media File</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-page" id="menu-pages">
+	<a href='edit.php?post_type=page' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-page" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-page' aria-hidden='true'><br /></div><div class='wp-menu-name'>Pages</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Pages</li><li class="wp-first-item"><a href='edit.php?post_type=page' class="wp-first-item">All Pages</a></li><li><a href='post-new.php?post_type=page'>Add Page</a></li></ul></li>
+	<li class="wp-not-current-submenu menu-top menu-icon-comments menu-top-last" id="menu-comments">
+	<a href='edit-comments.php' class="wp-not-current-submenu menu-top menu-icon-comments menu-top-last" ><div class='wp-menu-image dashicons-before dashicons-admin-comments' aria-hidden='true'><br /></div><div class='wp-menu-name'>Comments <span class="awaiting-mod count-0"><span class="pending-count" aria-hidden="true">0</span><span class="comments-in-moderation-text screen-reader-text">0 Comments in moderation</span></span></div></a></li>
+	<li class="wp-not-current-submenu wp-menu-separator" aria-hidden="true"><div class="separator"></div></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-appearance menu-top-first" id="menu-appearance">
+	<a href='themes.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-appearance menu-top-first" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-appearance' aria-hidden='true'><br /></div><div class='wp-menu-name'>Appearance</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Appearance</li><li class="wp-first-item"><a href='themes.php' class="wp-first-item">Themes <span class="update-plugins count-0"><span class="theme-count">0</span></span></a></li><li><a href='site-editor.php'>Design</a></li><li class="hide-if-no-customize"><a href='customize.php?return=%2Fwp-admin%2Ftools.php%3Fpage%3Dplugin-check' class="hide-if-no-customize">Customize</a></li><li><a href='widgets.php'>Widgets</a></li><li><a href='nav-menus.php'>Menus</a></li><li><a href='themes.php?page=generate-options'>GeneratePress</a></li><li><a href='theme-editor.php'>Theme File Editor</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-plugins" id="menu-plugins">
+	<a href='plugins.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-plugins" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-plugins' aria-hidden='true'><br /></div><div class='wp-menu-name'>Plugins <span class="update-plugins count-0"><span class="plugin-count">0</span></span></div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Plugins <span class="update-plugins count-0"><span class="plugin-count">0</span></span></li><li class="wp-first-item"><a href='plugins.php' class="wp-first-item">Installed Plugins</a></li><li><a href='plugin-install.php'>Add Plugin</a></li><li><a href='plugin-editor.php'>Plugin File Editor</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-users" id="menu-users">
+	<a href='users.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-users" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-users' aria-hidden='true'><br /></div><div class='wp-menu-name'>Users</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Users</li><li class="wp-first-item"><a href='users.php' class="wp-first-item">All Users</a></li><li><a href='user-new.php'>Add User</a></li><li><a href='profile.php'>Profile</a></li></ul></li>
+	<li class="wp-has-submenu wp-has-current-submenu wp-menu-open menu-top menu-icon-tools" id="menu-tools">
+	<a href='tools.php' class="wp-has-submenu wp-has-current-submenu wp-menu-open menu-top menu-icon-tools" ><div class='wp-menu-image dashicons-before dashicons-admin-tools' aria-hidden='true'><br /></div><div class='wp-menu-name'>Tools</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Tools</li><li class="wp-first-item"><a href='tools.php' class="wp-first-item">Available Tools</a></li><li><a href='import.php'>Import</a></li><li><a href='export.php'>Export</a></li><li><a href='site-health.php'>Site Health <span class="menu-counter site-health-counter count-1"><span class="count">1</span></span></a></li><li><a href='export-personal-data.php'>Export Personal Data</a></li><li><a href='erase-personal-data.php'>Erase Personal Data</a></li><li class="current"><a href='tools.php?page=plugin-check' class="current" aria-current="page">Plugin Check</a></li></ul></li>
+	<li class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-settings menu-top-last" id="menu-settings">
+	<a href='options-general.php' class="wp-has-submenu wp-not-current-submenu menu-top menu-icon-settings menu-top-last" data-ariahaspopup><div class='wp-menu-image dashicons-before dashicons-admin-settings' aria-hidden='true'><br /></div><div class='wp-menu-name'>Settings</div></a>
+	<ul class='wp-submenu wp-submenu-wrap'><li class='wp-submenu-head' aria-hidden='true'>Settings</li><li class="wp-first-item"><a href='options-general.php' class="wp-first-item">General</a></li><li><a href='options-writing.php'>Writing</a></li><li><a href='options-reading.php'>Reading</a></li><li><a href='options-discussion.php'>Discussion</a></li><li><a href='options-media.php'>Media</a></li><li><a href='options-permalink.php'>Permalinks</a></li><li><a href='options-privacy.php'>Privacy</a></li></ul></li>
+	<li class="wp-not-current-submenu wp-menu-separator" aria-hidden="true"><div class="separator"></div></li>
+	<li class="wp-not-current-submenu menu-top toplevel_page_ee-simple-file-list-pro menu-top-first menu-top-last" id="toplevel_page_ee-simple-file-list-pro">
+	<a href='admin.php?page=ee-simple-file-list-pro' class="wp-not-current-submenu menu-top toplevel_page_ee-simple-file-list-pro menu-top-first menu-top-last" ><div class='wp-menu-image dashicons-before dashicons-index-card' aria-hidden='true'><br /></div><div class='wp-menu-name'>File List</div></a></li><li id="collapse-menu" class="hide-if-no-js"><button type="button" id="collapse-button" aria-label="Collapse Main Menu" aria-expanded="true"><span class="collapse-button-icon" aria-hidden="true"></span><span class="collapse-button-label">Collapse Menu</span></button></li></ul>
+</div>
+</div>
+<div id="wpcontent">
+
+		<div id="wpadminbar" class="nojq nojs">
+						<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
+				<ul role='menu' id='wp-admin-bar-root-default' class="ab-top-menu"><li role='group' id='wp-admin-bar-menu-toggle'><a class='ab-item' role="menuitem" href='#'><span class="ab-icon" aria-hidden="true"></span><span class="screen-reader-text">Menu</span></a></li><li role='group' id='wp-admin-bar-wp-logo' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='https://dev2:8890/wp-admin/about.php'><span class="ab-icon" aria-hidden="true"></span><span class="screen-reader-text">About WordPress</span></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='About WordPress' id='wp-admin-bar-wp-logo-default' class="ab-submenu"><li role='group' id='wp-admin-bar-about'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/about.php'>About WordPress</a></li><li role='group' id='wp-admin-bar-contribute'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/contribute.php'>Get Involved</a></li></ul><ul role='menu' aria-label='About WordPress' id='wp-admin-bar-wp-logo-external' class="ab-sub-secondary ab-submenu"><li role='group' id='wp-admin-bar-wporg'><a class='ab-item' role="menuitem" href='https://wordpress.org/'>WordPress.org</a></li><li role='group' id='wp-admin-bar-documentation'><a class='ab-item' role="menuitem" href='https://wordpress.org/documentation/'>Documentation</a></li><li role='group' id='wp-admin-bar-learn'><a class='ab-item' role="menuitem" href='https://learn.wordpress.org/'>Learn WordPress</a></li><li role='group' id='wp-admin-bar-support-forums'><a class='ab-item' role="menuitem" href='https://wordpress.org/support/forums/'>Support</a></li><li role='group' id='wp-admin-bar-feedback'><a class='ab-item' role="menuitem" href='https://wordpress.org/support/forum/requests-and-feedback'>Feedback</a></li></ul></div></li><li role='group' id='wp-admin-bar-site-name' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='https://dev2:8890/'>SFL PRO DEV LOCAL</a><div class="ab-sub-wrapper"><ul role='menu' aria-label='SFL PRO DEV LOCAL' id='wp-admin-bar-site-name-default' class="ab-submenu"><li role='group' id='wp-admin-bar-view-site'><a class='ab-item' role="menuitem" href='https://dev2:8890/'>Visit Site</a></li></ul></div></li><li role='group' id='wp-admin-bar-comments'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/edit-comments.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label awaiting-mod pending-count count-0" aria-hidden="true">0</span><span class="screen-reader-text comments-in-moderation-text">0 Comments in moderation</span></a></li><li role='group' id='wp-admin-bar-new-content' class="menupop"><a class='ab-item' role="menuitem" aria-expanded="false" href='https://dev2:8890/wp-admin/post-new.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label">New</span></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='New' id='wp-admin-bar-new-content-default' class="ab-submenu"><li role='group' id='wp-admin-bar-new-post'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/post-new.php'>Post</a></li><li role='group' id='wp-admin-bar-new-media'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/media-new.php'>Media</a></li><li role='group' id='wp-admin-bar-new-page'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/post-new.php?post_type=page'>Page</a></li><li role='group' id='wp-admin-bar-new-user'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/user-new.php'>User</a></li></ul></div></li></ul><ul role='menu' id='wp-admin-bar-top-secondary' class="ab-top-secondary ab-top-menu"><li role='group' id='wp-admin-bar-my-account' class="menupop with-avatar"><a class='ab-item' role="menuitem" aria-expanded="false" href='https://dev2:8890/wp-admin/profile.php'>Howdy, <span class="display-name">eeAdmin</span><img alt='' src='https://secure.gravatar.com/avatar/756243c8fcfaafd7a303e34c2d65713bd0b0f940e89ebe9460e4ca16510375a4?s=26&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/756243c8fcfaafd7a303e34c2d65713bd0b0f940e89ebe9460e4ca16510375a4?s=52&#038;d=mm&#038;r=g 2x' class='avatar avatar-26 photo' height='26' width='26' loading='lazy' decoding='async'/></a><div class="ab-sub-wrapper"><ul role='menu' aria-label='Howdy, eeAdmin' id='wp-admin-bar-user-actions' class="ab-submenu"><li role='group' id='wp-admin-bar-user-info'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-admin/profile.php'><img alt='' src='https://secure.gravatar.com/avatar/756243c8fcfaafd7a303e34c2d65713bd0b0f940e89ebe9460e4ca16510375a4?s=64&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/756243c8fcfaafd7a303e34c2d65713bd0b0f940e89ebe9460e4ca16510375a4?s=128&#038;d=mm&#038;r=g 2x' class='avatar avatar-64 photo' height='64' width='64' loading='lazy' decoding='async'/><span class='display-name'>eeAdmin</span><span class='display-name edit-profile'>Edit Profile</span></a></li><li role='group' id='wp-admin-bar-logout'><a class='ab-item' role="menuitem" href='https://dev2:8890/wp-login.php?action=logout&#038;_wpnonce=4031d15f6d'>Log Out</a></li></ul></div></li></ul>			</div>
+		</div>
+
+
+<div id="wpbody" role="main">
+
+<div id="wpbody-content">
+		<div id="screen-meta" class="metabox-prefs">
+
+			<div id="contextual-help-wrap" class="hidden no-sidebar" tabindex="-1" aria-label="Contextual Help Tab">
+				<div id="contextual-help-back"></div>
+				<div id="contextual-help-columns">
+					<div class="contextual-help-tabs">
+						<ul>
+
+							<li id="tab-link-plugin-check" class="active">
+								<a href="#tab-panel-plugin-check" aria-controls="tab-panel-plugin-check">
+									Checks								</a>
+							</li>
+													</ul>
+					</div>
+
+
+					<div class="contextual-help-tabs-wrap">
+
+							<div id="tab-panel-plugin-check" class="help-tab-content active">
+								<dl>			<dt>
+				<code>i18n_usage</code>
+				(General, Plugin Repo)
+			</dt>
+			<dd>
+				Checks for various internationalization best practices.				<br>
+				<a href="https://developer.wordpress.org/plugins/internationalization/how-to-internationalize-your-plugin/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>code_obfuscation</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Detects the usage of code obfuscation tools.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>file_type</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Detects the usage of hidden and compressed files, VCS directories, application files, badly named files and Library Core Files.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>plugin_header_fields</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Checks adherence to the Headers requirements.				<br>
+				<a href="https://developer.wordpress.org/plugins/plugin-basics/header-requirements/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>late_escaping</code>
+				(Security, Plugin Repo)
+			</dt>
+			<dd>
+				Checks that all output is escaped before being sent to the browser.				<br>
+				<a href="https://developer.wordpress.org/apis/security/escaping/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>plugin_updater</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Prevents altering WordPress update routines or using custom updaters, which are not allowed on WordPress.org.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>plugin_uninstall</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Checks related to plugin uninstallation.				<br>
+				<a href="https://developer.wordpress.org/plugins/plugin-basics/uninstall-methods/#method-2-uninstall-php">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>plugin_review_phpcs</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Runs PHP_CodeSniffer to detect certain best practices plugins should follow for submission on WordPress.org.				<br>
+				<a href="https://developer.wordpress.org/plugins/plugin-basics/best-practices/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>direct_db_queries</code>
+				(Security, Plugin Repo)
+			</dt>
+			<dd>
+				Checks the usage of direct database queries, which should be avoided.				<br>
+				<a href="https://developer.wordpress.org/apis/database/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>performant_wp_query_params</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks for potentially slow database queries when using <code>WP_Query</code>				<br>
+				<a href="https://developer.wordpress.org/apis/database/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_scripts_in_footer</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether a loading strategy is explicitly set for JavaScript files, as loading scripts in the footer is usually desired.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_resources</code>
+				(Plugin Repo, Performance)
+			</dt>
+			<dd>
+				Checks whether scripts and styles are properly enqueued using the recommended way.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>plugin_readme</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Checks adherence to the <code>readme.txt</code> requirements.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/how-your-readme-txt-works/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>localhost</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Detects the usage of Localhost/127.0.0.1 in the plugin.				<br>
+				<a href="https://make.wordpress.org/plugins/handbook/performing-reviews/review-checklist/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>no_unfiltered_uploads</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Detects disallowed usage of <code>ALLOW_UNFILTERED_UPLOADS</code>.				<br>
+				<a href="https://make.wordpress.org/plugins/handbook/performing-reviews/review-checklist/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>trademarks</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Checks the usage of trademarks or other projects in the plugin slug.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>offloading_files</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Prevents using remote services that are not necessary.				<br>
+				<a href="https://developer.wordpress.org/plugins/wordpress-org/common-issues/#calling-files-remotely">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>setting_sanitization</code>
+				(Plugin Repo)
+			</dt>
+			<dd>
+				Ensures sanitization in register_setting().				<br>
+				<a href="https://developer.wordpress.org/reference/functions/register_setting/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_scripts_size</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether the cumulative size of all scripts enqueued on a page exceeds 293 KB.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_styles_size</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether the cumulative size of all stylesheets enqueued on a page exceeds 293 KB.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_styles_scope</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether any stylesheets are loaded on all pages, which is usually not desirable and can lead to performance issues.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>enqueued_scripts_scope</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether any scripts are loaded on all pages, which is usually not desirable and can lead to performance issues.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+						<dt>
+				<code>non_blocking_scripts</code>
+				(Performance)
+			</dt>
+			<dd>
+				Checks whether scripts and styles are enqueued using a recommended loading strategy.				<br>
+				<a href="https://developer.wordpress.org/plugins/">
+					Learn more				</a>
+			</dd>
+			</dl>							</div>
+												</div>
+				</div>
+			</div>
+				</div>
+				<div id="screen-meta-links">
+					<div id="contextual-help-link-wrap" class="hide-if-no-js screen-meta-toggle">
+			<button type="button" id="contextual-help-link" class="button show-settings" aria-controls="contextual-help-wrap" aria-expanded="false">Help</button>
+			</div>
+				</div>
+		<p id="dolly"><span class="screen-reader-text">Quote from Hello Dolly song, by Jerry Herman: </span><span dir="ltr">I feel the room swayin&#8217;</span></p>
+<div class="wrap">
+
+	<h1>Plugin Check</h1>
+
+	<div class="plugin-check-content">
+
+
+			<form>
+				<h2>
+					<label class="title" for="plugin-check__plugins-dropdown">
+						Check the Plugin					</label>
+				</h2>
+
+				<p id="plugin-check__description">
+					Select a plugin to check it for best practices in several categories and security issues. For more information about the checks, use the Help tab at the top of this page.				</p>
+
+				<select id="plugin-check__plugins-dropdown" name="plugin_check_plugins" aria-describedby="plugin-check__description">
+											<option value="">Select Plugin</option>
+																<option value="ee-plugin-check-organizer/ee-plugin-check-organizer.php">
+							EE Plugin Check Organizer						</option>
+											<option value="hello-dolly/hello.php">
+							Hello Dolly						</option>
+											<option value="ee-simple-file-list-access/ee-simple-file-list-access.php">
+							Simple File List Access						</option>
+											<option value="ee-simple-file-list-email/ee-simple-file-list-email.php">
+							Simple File List Email						</option>
+											<option value="ee-simple-file-list-pro/ee-simple-file-list-pro.php">
+							Simple File List Pro						</option>
+											<option value="ee-simple-file-list-search/ee-simple-file-list-search.php">
+							Simple File List Search						</option>
+											<option value="ee-simple-file-list-tweak/ee-simple-file-list-tweak.php">
+							Simple File List Tweak						</option>
+											<option value="ee-simple-file-list-utility/ee-simple-file-list-utility.php">
+							Simple File List Utility						</option>
+									</select>
+
+				<input type="submit" value="Check it!" id="plugin-check__submit" class="button button-primary" />
+				<span id="plugin-check__spinner" class="spinner" style="float: none;"></span>
+				<h4>Categories</h4>
+								<table id="plugin-check__categories">
+									<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">general</legend>
+								<label for="general">
+									<input type="checkbox" id="general" name="categories" value="general"  checked='checked' />
+									General								</label>
+							</fieldset>
+						</td>
+					</tr>
+									<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">plugin_repo</legend>
+								<label for="plugin_repo">
+									<input type="checkbox" id="plugin_repo" name="categories" value="plugin_repo"  checked='checked' />
+									Plugin Repo								</label>
+							</fieldset>
+						</td>
+					</tr>
+									<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">security</legend>
+								<label for="security">
+									<input type="checkbox" id="security" name="categories" value="security"  checked='checked' />
+									Security								</label>
+							</fieldset>
+						</td>
+					</tr>
+									<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">performance</legend>
+								<label for="performance">
+									<input type="checkbox" id="performance" name="categories" value="performance"  checked='checked' />
+									Performance								</label>
+							</fieldset>
+						</td>
+					</tr>
+									<tr>
+						<td>
+							<fieldset>
+								<legend class="screen-reader-text">accessibility</legend>
+								<label for="accessibility">
+									<input type="checkbox" id="accessibility" name="categories" value="accessibility"  checked='checked' />
+									Accessibility								</label>
+							</fieldset>
+						</td>
+					</tr>
+								</table>
+
+
+			</form>
+
+			</div>
+
+	<div id="plugin-check__results"></div>
+
+</div>
+
+<div class="clear"></div></div><!-- wpbody-content -->
+<div class="clear"></div></div><!-- wpbody -->
+<div class="clear"></div></div><!-- wpcontent -->
+
+<div id="wpfooter" role="contentinfo">
+		<p id="footer-left" class="alignleft">
+		<span id="footer-thankyou">Thank you for creating with <a href="https://wordpress.org/">WordPress</a>.</span>	</p>
+	<p id="footer-upgrade" class="alignright">
+		Version 6.8.2	</p>
+	<div class="clear"></div>
+</div>
+        <script type="text/javascript">
+        console.log('EE Plugin Check Organizer: PHP script loaded');
+        jQuery(document).ready(function($) {
+            console.log('EE Plugin Check Organizer: jQuery ready fired');
+            console.log('EE Plugin Check Organizer: Looking for categories table:', $('#plugin-check__categories').length);
+
+            // Initialize the filter interface on Plugin Check pages
+            if (typeof window.eePluginCheckOrganizerInit === 'function') {
+                console.log('EE Plugin Check Organizer: Init function found, calling...');
+                window.eePluginCheckOrganizerInit();
+            } else {
+                console.log('EE Plugin Check Organizer: Init function NOT found!');
+                console.log('EE Plugin Check Organizer: Available functions:', Object.keys(window).filter(k => k.includes('ee')));
+            }
+        });
+        </script>
+        <script id="tmpl-plugin-check-results-table" type="text/template">
+<h4>FILE: {{ data.file }}</h4>
+<table id="plugin-check__results-table-{{data.index}}" class="widefat striped plugin-check__results-table">
+	<thead>
+		<tr>
+			<td>
+				Line			</td>
+			<td>
+				Column			</td>
+			<td>
+				Type			</td>
+			<td>
+				Code			</td>
+			<td>
+				Message			</td>
+			<# if ( data.hasLinks ) { #>
+				<td>
+					Edit Link				</td>
+			<# } #>
+		</tr>
+	</thead>
+	<tbody id="plugin-check__results-body-{{data.index}}"></tbody>
+</table>
+<br>
+</script>
+<script id="tmpl-plugin-check-results-row" type="text/template">
+<tr class="plugin-check__results-row">
+	<td data-label="Line">
+		{{data.line}}
+	</td>
+	<td data-label="Column">
+		{{data.column}}
+	</td>
+	<td data-label="Type">
+		{{data.type}}
+	</td>
+	<td data-label="Code">
+		{{data.code}}
+	</td>
+	<td data-label="Message">
+		{{{data.message}}}
+		<# if ( data.docs ) { #>
+			<br>
+			<a href="{{data.docs}}" target="_blank">
+				Learn more				<span class="screen-reader-text">(opens in a new tab)</span>
+				<span aria-hidden="true" class="dashicons dashicons-external"></span>
+			</a>
+		<# } #>
+	</td>
+	<# if ( data.hasLinks ) { #>
+		<td>
+			<# if ( data.link ) { #>
+				<a href="{{data.link}}" target="_blank">
+					View in code editor					<span class="screen-reader-text">(opens in a new tab)</span>
+					<span aria-hidden="true" class="dashicons dashicons-external"></span>
+				</a>
+			<# } #>
+		</td>
+	<# } #>
+</tr>
+</script>
+<script id="tmpl-plugin-check-results-complete" type="text/template">
+<div class="notice notice-{{ data.type }}">
+    <p>Checks complete. {{ data.message }}</p>
+</div>
+</script>
+		<style>
+			#plugin-check__results .notice,
+			#plugin-check__results .notice + h4 {
+				margin-top: 20px;
+			}
+			#plugin-check__results h4:first-child {
+				margin-top: 80.5px;
+			}
+			@media ( max-width: 782px ) {
+				#plugin-check__results h4:first-child {
+					margin-top: 88.5px;
+				}
+			}
+		</style>
+			<div id="wp-auth-check-wrap" class="hidden">
+	<div id="wp-auth-check-bg"></div>
+	<div id="wp-auth-check">
+	<button type="button" class="wp-auth-check-close button-link"><span class="screen-reader-text">
+		Close dialog	</span></button>
+			<div id="wp-auth-check-form" class="loading" data-src="https://dev2:8890/wp-login.php?interim-login=1&#038;wp_lang=en_US"></div>
+			<div class="wp-auth-fallback">
+		<p><b class="wp-auth-fallback-expired" tabindex="0">Session expired</b></p>
+		<p><a href="https://dev2:8890/wp-login.php" target="_blank">Please log in again.</a>
+		The login page will open in a new tab. After logging in you can close it and return to this page.</p>
+	</div>
+	</div>
+	</div>
+	<script src='https://dev2:8890/wp-admin/load-scripts.php?c=1&amp;load%5Bchunk_0%5D=hoverIntent,wp-dom-ready,wp-hooks&amp;ver=6.8.2'></script>
+<script src="https://dev2:8890/wp-includes/js/dist/i18n.min.js?ver=5e580eb46a90c2b997e6" id="wp-i18n-js"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+</script>
+<script src="https://dev2:8890/wp-includes/js/dist/a11y.min.js?ver=3156534cc54473497e14" id="wp-a11y-js"></script>
+<script id="common-js-extra">
+var bulkActionObserverIds = {"bulk_action":"action","changeit":"new_role"};
+</script>
+<script src="https://dev2:8890/wp-admin/js/common.min.js?ver=6.8.2" id="common-js"></script>
+<script src="https://dev2:8890/wp-includes/js/hoverintent-js.min.js?ver=2.2.1" id="hoverintent-js-js"></script>
+<script src="https://dev2:8890/wp-includes/js/admin-bar.min.js?ver=6.8.2" id="admin-bar-js"></script>
+<script src="https://dev2:8890/wp-admin/js/svg-painter.js?ver=6.8.2" id="svg-painter-js"></script>
+<script id="heartbeat-js-extra">
+var heartbeatSettings = {"nonce":"73229fe5f9"};
+</script>
+<script src="https://dev2:8890/wp-includes/js/heartbeat.min.js?ver=6.8.2" id="heartbeat-js"></script>
+<script src="https://dev2:8890/wp-includes/js/wp-auth-check.min.js?ver=6.8.2" id="wp-auth-check-js"></script>
+<script id="ee-plugin-check-organizer-js-extra">
+var eePluginCheckOrganizer = {"nonce":"38a1376d57","strings":{"filterPlaceholder":"Filter by file name, error type, or error code...","clearFilter":"Clear Filter","noResults":"No results found matching your filter.","showAll":"Show All","errorType":"Error Type","errorCode":"Error Code","fileName":"File Name"}};
+</script>
+<script src="https://dev2:8890/wp-content/plugins/ee-plugin-check-organizer/main.js?ver=1.0.0" id="ee-plugin-check-organizer-js"></script>
+<script src="https://dev2:8890/wp-includes/js/underscore.min.js?ver=1.13.7" id="underscore-js"></script>
+<script id="wp-util-js-extra">
+var _wpUtilSettings = {"ajax":{"url":"\/wp-admin\/admin-ajax.php"}};
+</script>
+<script src="https://dev2:8890/wp-includes/js/wp-util.min.js?ver=6.8.2" id="wp-util-js"></script>
+<script id="plugin-check-admin-js-before">
+const PLUGIN_CHECK = {"nonce":"6046d7cd7c","actionGetChecksToRun":"plugin_check_get_checks_to_run","actionSetUpRuntimeEnvironment":"plugin_check_set_up_environment","actionRunChecks":"plugin_check_run_checks","actionCleanUpRuntimeEnvironment":"plugin_check_clean_up_environment","successMessage":"No errors found.","errorMessage":"Errors were found."}
+</script>
+<script src="https://dev2:8890/wp-content/plugins/plugin-check/assets/js/plugin-check-admin.js?ver=1.6.0" id="plugin-check-admin-js"></script>
+
+<div class="clear"></div></div><!-- wpwrap -->
+<script type="text/javascript">if(typeof wpOnload==='function')wpOnload();</script>
+</body>
+</html>

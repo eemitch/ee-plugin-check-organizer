@@ -54,11 +54,74 @@ class EE_Plugin_Check_Organizer {
             return;
         }
 
-        // Enqueue our JavaScript
+        // Enqueue module files in correct dependency order
+        // 1. Configuration constants first
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-config',
+            plugins_url('config/constants.js', __FILE__),
+            array('jquery'),
+            self::VERSION,
+            true
+        );
+
+        // 2. Utility functions
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-utils',
+            plugins_url('modules/utils.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config'),
+            self::VERSION,
+            true
+        );
+
+        // 3. Core modules
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-results-parser',
+            plugins_url('modules/results-parser.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils'),
+            self::VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-interface',
+            plugins_url('modules/interface.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils'),
+            self::VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-filters',
+            plugins_url('modules/filters.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils'),
+            self::VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-sorting',
+            plugins_url('modules/sorting.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils'),
+            self::VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'ee-plugin-check-organizer-export',
+            plugins_url('modules/export.js', __FILE__),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils'),
+            self::VERSION,
+            true
+        );
+
+        // 4. Main coordinator last (depends on all modules)
         wp_enqueue_script(
             'ee-plugin-check-organizer',
             plugins_url('main.js', __FILE__),
-            array('jquery'),
+            array('jquery', 'ee-plugin-check-organizer-config', 'ee-plugin-check-organizer-utils',
+                  'ee-plugin-check-organizer-results-parser', 'ee-plugin-check-organizer-interface',
+                  'ee-plugin-check-organizer-filters', 'ee-plugin-check-organizer-sorting',
+                  'ee-plugin-check-organizer-export'),
             self::VERSION,
             true
         );
