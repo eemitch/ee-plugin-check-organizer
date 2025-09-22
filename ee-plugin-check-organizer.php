@@ -99,20 +99,109 @@ class EE_Plugin_Check_Organizer {
 
         ?>
         <script type="text/javascript">
-        console.log('EE Plugin Check Organizer: PHP script loaded');
-        jQuery(document).ready(function($) {
-            console.log('EE Plugin Check Organizer: jQuery ready fired');
-            console.log('EE Plugin Check Organizer: Looking for categories table:', $('#plugin-check__categories').length);
+        console.log('eePCP: PHP script loaded');
+        console.log('eePCP: jQuery available?', typeof jQuery !== 'undefined');
+        console.log('eePCP: $ available?', typeof $ !== 'undefined');
+        console.log('eePCP: About to call jQuery ready...');
 
-            // Initialize the filter interface on Plugin Check pages
-            if (typeof window.eePluginCheckOrganizerInit === 'function') {
-                console.log('EE Plugin Check Organizer: Init function found, calling...');
-                window.eePluginCheckOrganizerInit();
-            } else {
-                console.log('EE Plugin Check Organizer: Init function NOT found!');
-                console.log('EE Plugin Check Organizer: Available functions:', Object.keys(window).filter(k => k.includes('ee')));
-            }
-        });
+        if (typeof jQuery !== 'undefined') {
+            console.log('eePCP: Inside jQuery check, calling ready...');
+            jQuery(document).ready(function($) {
+                console.log('eePCP: jQuery ready fired!');
+
+                // Find form elements
+                var dropdown = $('#plugin-check__plugins-dropdown');
+                var submitBtn = $('#plugin-check__submit');
+                var spinner = $('#plugin-check__spinner');
+                var form = submitBtn.closest('form');
+
+                console.log('eePCP: Elements found - Dropdown:', dropdown.length, 'Submit:', submitBtn.length, 'Spinner:', spinner.length);
+
+                // Listen to events
+                if (dropdown.length > 0) {
+                    dropdown.on('change', function() {
+                        console.log('eePCP: DROPDOWN CHANGED to:', $(this).val());
+                    });
+                }
+
+                if (form.length > 0) {
+                    form.on('submit', function() {
+                        console.log('eePCP: FORM SUBMITTED!');
+                    });
+                }
+
+                // Monitor spinner with optimized polling
+                if (spinner.length > 0) {
+                    var lastState = spinner.hasClass('is-active');
+                    var pollCount = 0;
+                    var pollInterval = null;
+
+                    function startPolling() {
+                        if (pollInterval) return; // Already polling
+
+                        console.log('eePCP: Starting spinner polling');
+                        pollInterval = setInterval(function() {
+                            pollCount++;
+                            var currentState = spinner.hasClass('is-active');
+
+                            if (pollCount % 50 === 0) {
+                                console.log('eePCP: Poll #' + pollCount + ' - spinner active:', currentState);
+                            }
+
+                            if (currentState !== lastState) {
+                                if (currentState) {
+                                    console.log('eePCP: SPINNER ACTIVE!');
+                                } else {
+                                    console.log('eePCP: SPINNER INACTIVE!');
+
+                                    // Activate interface when check completes
+                                    if (window.EEPluginCheckOrganizer && window.EEPluginCheckOrganizer.Interface) {
+                                        console.log('eePCP: Calling Interface.setActive()');
+                                        window.EEPluginCheckOrganizer.Interface.setActive();
+                                    } else {
+                                        console.log('eePCP: Interface module not available');
+                                    }
+                                }
+                                lastState = currentState;
+
+                                // Stop polling when spinner becomes inactive
+                                if (!currentState) {
+                                    console.log('eePCP: Stopping spinner polling');
+                                    clearInterval(pollInterval);
+                                    pollInterval = null;
+                                }
+                            }
+                        }, 100);
+                    }
+
+                    // Start polling when submit button is clicked
+                    if (submitBtn.length > 0) {
+                        submitBtn.on('click', function() {
+                            console.log('eePCP: SUBMIT CLICKED!');
+
+                            // Set interface to inactive state
+                            if (window.EEPluginCheckOrganizer && window.EEPluginCheckOrganizer.Interface) {
+                                console.log('eePCP: Calling Interface.setInactive()');
+                                window.EEPluginCheckOrganizer.Interface.setInactive();
+                            } else {
+                                console.log('eePCP: Interface module not available');
+                            }
+
+                            startPolling();
+                        });
+                    }
+                }
+
+                // Initialize the filter interface
+                console.log('eePCP: Calling eePluginCheckOrganizerInit...');
+                if (typeof window.eePluginCheckOrganizerInit === 'function') {
+                    window.eePluginCheckOrganizerInit();
+                    console.log('eePCP: eePluginCheckOrganizerInit called successfully');
+                } else {
+                    console.log('eePCP: eePluginCheckOrganizerInit function not available');
+                }
+            });
+        }
         </script>
         <?php
     }

@@ -51,7 +51,8 @@
         bindFilterEvents();
 
         // Watch for the "Checks complete" notice to appear
-        watchForCheckComplete();
+        // NOTE: Replaced by PHP polling approach in version 1.1.2+
+        // watchForCheckComplete();
 
         // Watch for "Check It!" button clicks to reset interface immediately
         $(document).on('click', '#plugin-check-form input[type="submit"]', function() {
@@ -63,6 +64,20 @@
         window.eePluginCheckOrganizer = {
             refreshResults: refreshResults,
             exportResults: exportResults
+        };
+
+        // Add the new Interface module for the polling approach
+        window.EEPluginCheckOrganizer = {
+            Interface: {
+                setActive: function() {
+                    debugLog('Interface.setActive() called');
+                    refreshResults();
+                },
+                setInactive: function() {
+                    debugLog('Interface.setInactive() called');
+                    resetInterface();
+                }
+            }
         };
 
         // Add debug functions only in debug mode
@@ -93,59 +108,6 @@
 
         debugLog('Initialization complete');
     };
-
-    /**
-     * Watch for the "Checks complete" notice to appear
-     */
-    function watchForCheckComplete() {
-        console.log('EE Plugin Check Organizer: Setting up check complete watcher');
-
-        // Use MutationObserver to watch for both start and completion
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1) {
-                        const $node = $(node);
-
-                        // Check for Plugin Check starting (results being cleared)
-                        if ($node.find('#plugin-check__results').length > 0 || $node.attr('id') === 'plugin-check__results') {
-                            console.log('EE Plugin Check Organizer: Plugin Check starting, resetting interface');
-                            resetInterface();
-                        }
-
-                        // Check if this node or any of its children contains the completion notice
-                        const completionNotice = $node.find('.notice p').filter(function() {
-                            return $(this).text().includes('Checks complete');
-                        });
-
-                        // Also check if the node itself is the notice
-                        if ($node.hasClass('notice') && $node.find('p').text().includes('Checks complete')) {
-                            completionNotice.push($node[0]);
-                        }
-
-                        if (completionNotice.length > 0) {
-                            console.log('EE Plugin Check Organizer: Check completion detected!');
-
-                            // Give it a moment for all results to load, then refresh
-                            setTimeout(function() {
-                                refreshResults();
-                            }, 500);
-
-                            // Keep watching for subsequent checks - don't disconnect
-                        }
-                    }
-                });
-            });
-        });
-
-        // Watch the entire document for changes
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        console.log('EE Plugin Check Organizer: Check complete watcher active');
-    }
 
     /**
      * Reset the interface when a new Plugin Check starts

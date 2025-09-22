@@ -186,7 +186,7 @@ The WordPress Plugin Check tool is invaluable for ensuring compliance with WordP
 
 2. **Enabling focused reviews** of specific issue types```javascript
 
-3. **Streamlining team collaboration** with export capabilitiesconst observer = new MutationObserver(function(mutations) {
+3. **Streamlining team collaboration** with export capabilities const observer = new MutationObserver(function(mutations) {
 
 4. **Maintaining workflow efficiency** with real-time filtering    // Watch for "Checks complete" notice
 
