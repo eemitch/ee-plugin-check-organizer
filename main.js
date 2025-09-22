@@ -392,15 +392,15 @@
         filterInterface = $(`
             <div id="ee-plugin-check-filter" class="ee-filter-container ${disabledClass}">
                 <div class="ee-filter-header">
-                    <h3>🔍 Plugin Check Organizer</h3>
+                    <h3>Plugin Check Organizer</h3>
                     <div id="ee-results-summary" class="ee-results-summary-inline">
-                        ${hasResults ? '' : 'Run a plugin check to organize and filter results'}
+                        ${hasResults ? '' : 'Run a plugin check, then organize and filter the results'}
                     </div>
                 </div>
                 <div class="ee-filter-controls">
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-file-filter" class="ee-dropdown-label">
-                            <strong>📁 Filter by File:</strong>
+                            <strong>By File:</strong>
                         </label>
                         <select id="ee-file-filter" class="ee-file-dropdown" ${disabledAttr}>
                             ${fileOptions}
@@ -408,7 +408,7 @@
                     </div>
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-error-type-filter" class="ee-dropdown-label">
-                            <strong>⚠️ Filter by Error Type:</strong>
+                            <strong>By Error Type:</strong>
                         </label>
                         <select id="ee-error-type-filter" class="ee-file-dropdown" ${disabledAttr}>
                             ${errorTypeOptions}
@@ -416,7 +416,7 @@
                     </div>
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-error-code-filter" class="ee-dropdown-label">
-                            <strong>🔧 Filter by Error Code:</strong>
+                            <strong>By Error Code:</strong>
                         </label>
                         <select id="ee-error-code-filter" class="ee-file-dropdown" ${disabledAttr}>
                             ${errorCodeOptions}
@@ -427,7 +427,7 @@
                     <div class="ee-filter-dropdown-group">
                         <label class="ee-checkbox-label">
                             <input type="checkbox" id="ee-hide-hidden-files" ${disabledAttr}>
-                            <strong>🙈 Hide Hidden Files</strong>
+                            <strong>Hide Hidden</strong>
                             <span class="ee-checkbox-note">(Files starting with . like .DS_Store, .gitignore)</span>
                         </label>
                     </div>
@@ -435,7 +435,7 @@
                 <div class="ee-sort-controls">
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-sort-dropdown" class="ee-dropdown-label">
-                            <strong>🔀 Sort Results:</strong>
+                            <strong>Sort:</strong>
                         </label>
                         <select id="ee-sort-dropdown" class="ee-file-dropdown" ${disabledAttr}>
                             <option value="line-asc" selected>Line # (Low to High)</option>
@@ -452,7 +452,7 @@
                 <div class="ee-export-controls">
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-export-dropdown" class="ee-dropdown-label">
-                            <strong>📊 Export Results:</strong>
+                            <strong>Export:</strong>
                         </label>
                         <select id="ee-export-dropdown" class="ee-file-dropdown" ${disabledAttr}>
                             <option value="">Select export format...</option>
