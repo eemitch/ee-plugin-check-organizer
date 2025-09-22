@@ -25,7 +25,7 @@
      */
     function debugLog(...args) {
         if (DEBUG_MODE) {
-            console.log('EE Plugin Check Organizer:', ...args);
+            console.log('eePCP: ', ...args);
         }
     }
 
@@ -56,7 +56,7 @@
 
         // Watch for "Check It!" button clicks to reset interface immediately
         $(document).on('click', '#plugin-check-form input[type="submit"]', function() {
-            console.log('EE Plugin Check Organizer: Check It button clicked, resetting interface');
+            console.log('eePCP:  Check It button clicked, resetting interface');
             resetInterface();
         });
 
@@ -113,7 +113,7 @@
      * Reset the interface when a new Plugin Check starts
      */
     function resetInterface() {
-        console.log('EE Plugin Check Organizer: Resetting interface for new check');
+        console.log('eePCP:  Resetting interface for new check');
 
         // Clear previous data
         originalResults = [];
@@ -150,17 +150,17 @@
      * Refresh results data when new results are loaded
      */
     function refreshResults() {
-        console.log('EE Plugin Check Organizer: Refreshing results');
+        console.log('eePCP:  Refreshing results');
 
         // Check for results more thoroughly
         const resultsContainer = $('#plugin-check__results');
         const hasResults = resultsContainer.length > 0 && resultsContainer.find('h4').length > 0;
 
-        console.log('EE Plugin Check Organizer: Results container found:', resultsContainer.length > 0);
-        console.log('EE Plugin Check Organizer: H4 elements found:', resultsContainer.find('h4').length);
+        console.log('eePCP:  Results container found:', resultsContainer.length > 0);
+        console.log('eePCP:  H4 elements found:', resultsContainer.find('h4').length);
 
         if (hasResults) {
-            console.log('EE Plugin Check Organizer: Results detected, enabling interface');
+            console.log('eePCP:  Results detected, enabling interface');
 
             // Store results for filtering
             storeOriginalResults();
@@ -171,7 +171,7 @@
             // Update scan summary
             updateScanSummary();
         } else {
-            console.log('EE Plugin Check Organizer: No results found yet');
+            console.log('eePCP:  No results found yet');
         }
     }
 
@@ -207,7 +207,7 @@
         // Update subtitle
         filterInterface.find('.ee-filter-subtitle').text('Organize and filter your plugin check results');
 
-        console.log('EE Plugin Check Organizer: Filter interface enabled');
+        console.log('eePCP:  Filter interface enabled');
     }
 
     /**
@@ -373,7 +373,7 @@
         const categoriesTable = $('#plugin-check__categories');
 
         if (categoriesTable.length === 0) {
-            console.log('EE Plugin Check Organizer: Categories table not found');
+            console.log('eePCP:  Categories table not found');
             return;
         }
 
@@ -493,14 +493,14 @@
         } else {
             // Fallback: simple positioning
             categoriesTable.after(filterInterface);
-        }        console.log('EE Plugin Check Organizer: Filter interface created and inserted');
+        }        console.log('eePCP:  Filter interface created and inserted');
     }
 
     /**
      * Get HTML options for file dropdown
      */
     function getFileOptionsHtml(hasResults) {
-        console.log('EE Plugin Check Organizer: Getting file options, hasResults:', hasResults);
+        console.log('eePCP:  Getting file options, hasResults:', hasResults);
 
         if (!hasResults || originalResults.length === 0) {
             return '<option value="all">All Files</option>';
@@ -513,7 +513,7 @@
                 const actualFileName = fileName.split('/').pop();
                 return !actualFileName.startsWith('.');
             });
-        console.log('EE Plugin Check Organizer: Unique files found (excluding hidden):', uniqueFiles);
+        // console.log('eePCP: Unique files found (excluding hidden):', uniqueFiles);
 
         const files = ['<option value="all">All Files</option>'];
         uniqueFiles.forEach(function(fileName) {
@@ -521,7 +521,6 @@
             files.push(`<option value="${fileName}">${fileName} (${issueCount} issues)</option>`);
         });
 
-        console.log('EE Plugin Check Organizer: Generated options:', files);
         return files.join('');
     }
 
@@ -529,7 +528,7 @@
      * Get HTML options for error type dropdown
      */
     function getErrorTypeOptionsHtml(hasResults) {
-        console.log('EE Plugin Check Organizer: Getting error type options, hasResults:', hasResults);
+        console.log('eePCP:  Getting error type options, hasResults:', hasResults);
 
         if (!hasResults || originalResults.length === 0) {
             return '<option value="all">All Error Types</option>';
@@ -547,7 +546,7 @@
             errorTypes.push(`<option value="${errorType}">${errorType} (${count} issues)</option>`);
         });
 
-        console.log('EE Plugin Check Organizer: Generated error type options:', errorTypes);
+        // console.log('eePCP:  Generated error type options:', errorTypes);
         return errorTypes.join('');
     }
 
@@ -557,7 +556,7 @@
      * @param {Array} filteredData - Optional filtered data to use instead of originalResults
      */
     function getErrorCodeOptionsHtml(hasResults, filteredData = null) {
-        console.log('EE Plugin Check Organizer: Getting error code options, hasResults:', hasResults);
+        console.log('eePCP:  Getting error code options, hasResults:', hasResults);
 
         if (!hasResults || originalResults.length === 0) {
             return '<option value="all">All Error Codes</option>';
@@ -582,7 +581,7 @@
             errorCodes.push(`<option value="${errorCode}">${displayCode} (${count} issues)</option>`);
         });
 
-        console.log('EE Plugin Check Organizer: Generated error code options:', errorCodes);
+        // console.log('eePCP:  Generated error code options:', errorCodes);
         return errorCodes.join('');
     }
 
@@ -749,7 +748,7 @@
         const selectedErrorCode = $('#ee-error-code-filter').val();
         const hideHiddenFiles = $('#ee-hide-hidden-files').is(':checked');
 
-        console.log('EE Plugin Check Organizer: Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode, 'Hide Hidden:', hideHiddenFiles);
+        console.log('eePCP:  Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode, 'Hide Hidden:', hideHiddenFiles);
 
         // Remove any existing filtered results
         $('#ee-filtered-results').remove();
@@ -784,7 +783,7 @@
             });
         }
 
-        console.log('EE Plugin Check Organizer: Found', filteredIssues.length, 'filtered issues');
+        console.log('eePCP:  Found', filteredIssues.length, 'filtered issues');
 
         // Apply sorting if a sort field is selected
         if (currentSort.field) {
@@ -858,7 +857,7 @@
      * Apply file filter based on dropdown selection
      */
     function applyFileFilter(selectedFile) {
-        console.log('EE Plugin Check Organizer: Filtering by file:', selectedFile);
+        console.log('eePCP:  Filtering by file:', selectedFile);
 
         // Remove any existing filtered results
         $('#ee-filtered-results').remove();
@@ -866,7 +865,7 @@
         if (selectedFile === 'all') {
             // Show all original results
             $('#plugin-check__results').show();
-            console.log('EE Plugin Check Organizer: Showing all files');
+            console.log('eePCP:  Showing all files');
             return;
         }
 
@@ -875,7 +874,7 @@
 
         // Filter issues for selected file
         const filteredIssues = originalResults.filter(issue => issue.fileName === selectedFile);
-        console.log('EE Plugin Check Organizer: Found', filteredIssues.length, 'issues for', selectedFile);
+        console.log('eePCP:  Found', filteredIssues.length, 'issues for', selectedFile);
 
         if (filteredIssues.length === 0) {
             const noResults = $('<div id="ee-filtered-results" class="notice notice-info"><p>No issues found for ' + selectedFile + '</p></div>');
@@ -929,7 +928,7 @@
      */
     function applyFilter() {
         const selectedValue = $('.ee-radio-option input[type="radio"]:checked').val();
-        console.log('EE Plugin Check Organizer: Filter applied:', selectedValue);
+        console.log('eePCP:  Filter applied:', selectedValue);
 
         if (selectedValue === 'all') {
             displayFilteredResults(allFileBlocks);

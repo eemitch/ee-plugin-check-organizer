@@ -128,33 +128,137 @@ All exports include timestamps and active filter information.
 This plugin follows WordPress best practices and modern web development standards:
 
 - **Client-side DOM manipulation** for optimal performance
-- **MutationObserver pattern** for dynamic content detection
+- **Event-driven jQuery polling** for dynamic content detection
 - **Progressive enhancement** architecture
 - **No database dependencies** - all functionality is ephemeral
 - **WordPress coding standards** compliant
 - **jQuery-based** for maximum WordPress compatibility
 
-For detailed technical documentation, see [TECHNICAL-DOCS.md](TECHNICAL-DOCS.md).
+For detailed technical documentation, see the Technical Implementation section below.
 
-**Design Pattern: WordPress Core Class Extension**
+## Technical Implementation Patterns
+
+### 1. Event-Driven Detection and Initialization
+
+```javascript
+// Target Element Detection
+const categoriesTable = $('#plugin-check__categories');
+const resultsContainer = $('#plugin-check__results');
+
+// Conditional Initialization
+if (categoriesTable.length === 0) return; // Exit if not Plugin Check page
+```
+
+### 2. jQuery Polling Pattern for Dynamic Content
+
+```javascript
+// Monitor Plugin Check completion via spinner state
+function startPolling() {
+    pollInterval = setInterval(function() {
+        var currentState = spinner.hasClass('is-active');
+
+        if (currentState !== lastState) {
+            if (!currentState) {
+                // Plugin Check completed - activate interface
+                window.EEPluginCheckOrganizer.Interface.setActive();
+            }
+            lastState = currentState;
+        }
+    }, 100);
+}
+```
+
+### 3. State Management Architecture
+
+```javascript
+// Original Results Storage
+function storeOriginalResults() {
+    originalResults = []; // Parse and store DOM structure
+    allFileBlocks = [];   // Cache file-level data
+}
+
+// Filter Application
+function applyFilters() {
+    // Read current filter states
+    // Transform stored data based on filters
+    // Regenerate DOM structure
+}
+```
+
+### 4. Triple Filter System Design
+**Independent Filter Architecture**: Each filter operates independently and can be combined
+
+```javascript
+// Filter Types:
+// 1. File Filter: Groups results by filename
+// 2. Error Type Filter: Groups by ERROR/WARNING/INFO
+// 3. Error Code Filter: Groups by specific WordPress coding standards
+
+// Filter Combination Logic:
+if (selectedFile !== 'all') { /* File-specific filtering */ }
+if (selectedErrorType !== 'all') { /* Error type filtering */ }
+if (selectedErrorCode !== 'all') { /* Error code filtering */ }
+```
+
+### 5. WordPress Integration Points
+
+```php
+// Hook Integration
+add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+add_action('admin_footer', array($this, 'add_filter_interface'));
+
+// Global API Exposure
+window.EEPluginCheckOrganizer = {
+    Interface: {
+        setActive: function() { refreshResults(); },
+        setInactive: function() { resetInterface(); }
+    }
+};
+```
+
+## 🤝 Contributing
 
 We welcome contributions from the WordPress community! Here's how you can help:
 
-```css
-
-- 🐛 **Report bugs** via [GitHub Issues](../../issues)/* Extends WordPress core admin table classes */
-
-- 💡 **Suggest features** through [GitHub Issues](../../issues).ee-filter-container { /* Custom container styling */ }
-
-- 🔧 **Submit pull requests** following our [Contributing Guidelines](CONTRIBUTING.md).ee-filter-dropdown-group { /* Dropdown group styling */ }
-
+- 🐛 **Report bugs** via [GitHub Issues](../../issues)
+- 💡 **Suggest features** through [GitHub Issues](../../issues)
+- 🔧 **Submit pull requests** following our [Contributing Guidelines](CONTRIBUTING.md)
 - 📖 **Improve documentation**
+- 🧪 **Help with testing** across different WordPress setups
 
-- 🧪 **Help with testing** across different WordPress setups/* Leverages existing WordPress classes: */
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
-/* .widefat, .striped, .form-table */
+## 📝 Changelog
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.```
+See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
+
+## 📄 License
+
+This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) file for details.
+
+## 💡 Why This Plugin?
+
+The WordPress Plugin Check tool is invaluable for ensuring compliance with WordPress.org standards, but the default output can be overwhelming. This organizer transforms that experience by:
+
+1. **Reducing cognitive load** with smart filtering
+2. **Enabling focused reviews** of specific issue types
+3. **Streamlining team collaboration** with export capabilities
+4. **Maintaining workflow efficiency** with real-time filtering
+5. **Supporting systematic fixes** through organized presentation
+
+Perfect for:
+- **Plugin developers** preparing for WordPress.org submission
+- **Development teams** conducting code reviews
+- **Quality assurance** professionals managing compliance
+- **WordPress agencies** maintaining plugin portfolios
+
+## 🆘 Support
+
+- 📖 **Documentation**: See technical documentation above
+- 🐛 **Bug Reports**: [GitHub Issues](../../issues)
+- 💬 **Questions**: [GitHub Discussions](../../discussions)
+
+## 🙏 Acknowledgments
 
 
 
@@ -308,6 +412,30 @@ Perfect for:
 ---
 
 **Developed by [ElementEngage](https://elementengage.com)** | **Maintained by [@eemitch](https://github.com/eemitch)**
+
+### Current Status (September 2025)
+
+**Stability**: Production-ready with comprehensive enhancements
+**Architecture**: Event-driven jQuery polling for reliable Plugin Check detection
+**Performance**: Optimized for multiple Plugin Check runs and large result sets
+**Compatibility**: Works with all WordPress Plugin Check versions
+
+**Key Improvements Completed**:
+- ✅ Event-driven jQuery polling (replaced MutationObserver)
+- ✅ Dynamic cascading filters
+- ✅ Hidden files management
+- ✅ Enhanced sorting with sensible defaults
+- ✅ Robust state management
+- ✅ Non-invasive display architecture
+- ✅ Multi-check session support
+
+**Next Phase**: Focus shifts to using the organizer for systematic WordPress plugin compliance fixes.
+
+---
+
+**Last Updated**: September 22, 2025
+**Status**: Ready for production use
+**Maintained By**: ElementEngage Development Team
 
 ### 3. Cascading Filter Update Flow (NEW)
 ```

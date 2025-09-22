@@ -18,7 +18,7 @@ Enhance the WordPress Plugin Check tool with powerful filtering, sorting, and ex
 
 * **Triple Dropdown Filtering** - File, Error Type, and Error Code filters
 * **Export Capabilities** - Export filtered results in CSV, JSON, or TXT formats
-* **Non-Invasive DOM Approach** - Pure DOM manipulation, no database changes
+* **Event-Driven Architecture** - Reliable jQuery polling for Plugin Check completion detection
 * **Real-time Statistics** - Live stats panel showing issue counts and breakdown
 * **File-Based Filtering** - Filter results by specific files in your plugin
 * **Error Type Filtering** - Filter by error severity (ERROR, WARNING, INFO)
@@ -54,6 +54,7 @@ The filters work independently and in combination, so you can filter by a specif
 = Technical Details =
 
 * Works entirely with JavaScript DOM manipulation using jQuery
+* Event-driven jQuery polling for reliable Plugin Check completion detection
 * No server-side processing or database storage
 * Compatible with all Plugin Check tool versions
 * Preserves original Plugin Check functionality
@@ -109,6 +110,15 @@ The plugin is designed to gracefully handle DOM changes. If the structure change
 
 == Changelog ==
 
+= 1.1.2 =
+* Replaced MutationObserver with event-driven jQuery polling for more reliable detection
+* Improved Plugin Check completion detection accuracy
+* Enhanced error handling and graceful degradation
+* Optimized performance with targeted polling approach
+* Added comprehensive debug logging with eePCP: prefix for easy console filtering
+* Better state management for multiple Plugin Check runs
+* Improved compatibility across different WordPress environments
+
 = 1.0.0 =
 * Initial release
 * Triple dropdown filtering system (File, Error Type, Error Code)
@@ -119,6 +129,9 @@ The plugin is designed to gracefully handle DOM changes. If the structure change
 * Mobile optimization
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Major architecture improvement: Replaced MutationObserver with more reliable jQuery polling for better Plugin Check completion detection. Enhanced performance and compatibility.
 
 = 1.0.0 =
 Initial release of EE Plugin Check Organizer. Adds powerful triple dropdown filtering capabilities to the WordPress Plugin Check tool.
