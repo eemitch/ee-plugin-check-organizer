@@ -5,6 +5,25 @@ All notable changes to EE Plugin Check Organizer will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-17
+
+### Added
+- **Folder exclusion checkbox list** - Exclude all issues from one or more folders simultaneously using a scrollable multi-select checkbox list; folders are extracted from results and capped at 3 directory levels deep
+- **Error code exclusion checkbox list** - Exclude all issues matching one or more error codes simultaneously using a scrollable multi-select checkbox list
+- **Dynamic summary banner** - Issue count now reflects active exclusions in real time, showing "X of Y issues shown" with a live error/warning breakdown when anything is filtered or excluded
+
+### Changed
+- **Export simplified to JSON only** - Removed CSV and TXT export formats; replaced the format dropdown + Go button with a single "Export JSON" button
+- **JSON export `_summary` field** - First key in every export is a human-readable pipe-delimited summary describing the timestamp, issue count, and every active filter and exclusion
+- **JSON export metadata** - `filters` block now includes `excludedFolders`, `excludedErrorCodes`, and `hideHiddenFiles` fields
+- **Error code dropdown cascades with exclusions** - The "By Error Code" dropdown now correctly reflects active folder and error code exclusions when updating
+
+### Fixed
+- **Export excluded items bug** - Exported file previously included issues that were visually excluded via folder/code exclusion checkboxes; export now exactly matches displayed results
+- **Issue message sanitization** - Messages in JSON export now have HTML tags stripped, tab/newline whitespace collapsed, and missing spaces after sentence-ending periods (`"EULA.Please"` → `"EULA. Please"`) corrected
+
+---
+
 ## [1.0.0] - 2025-09-18
 
 ### Added

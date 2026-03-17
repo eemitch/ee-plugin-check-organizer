@@ -4,7 +4,7 @@ Tags: plugin-check, development, debugging, organization, filtering, export
 Requires at least: 5.0
 Tested up to: 6.3
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,9 +17,11 @@ Enhance the WordPress Plugin Check tool with powerful filtering, sorting, and ex
 = Key Features =
 
 * **Triple Dropdown Filtering** - File, Error Type, and Error Code filters
-* **Export Capabilities** - Export filtered results in CSV, JSON, or TXT formats
+* **Folder Exclusion** - Checkbox list to exclude all issues from one or more folders simultaneously
+* **Error Code Exclusion** - Checkbox list to exclude all issues matching one or more error codes simultaneously
+* **JSON Export** - Export filtered and excluded results as a clean, annotated JSON file
 * **Event-Driven Architecture** - Reliable jQuery polling for Plugin Check completion detection
-* **Real-time Statistics** - Live stats panel showing issue counts and breakdown
+* **Real-time Statistics** - Live stats panel showing "X of Y issues shown" with error/warning breakdown
 * **File-Based Filtering** - Filter results by specific files in your plugin
 * **Error Type Filtering** - Filter by error severity (ERROR, WARNING, INFO)
 * **Error Code Filtering** - Filter by specific WordPress coding standard error codes
@@ -37,8 +39,10 @@ When you run a plugin check, you'll see three dropdown filters above the results
 1. **Filter by File** - Select a specific file from the dropdown to see only results from that file
 2. **Filter by Error Type** - Choose ERROR, WARNING, or INFO to see only that severity level
 3. **Filter by Error Code** - Select specific WordPress coding standard error codes
-4. **Combine Filters** - Use multiple dropdowns together for precise filtering
-5. **Clear Filters** - Select "All Files", "All Types", or "All Codes" to reset individual filters
+4. **Exclude Folders** - Check one or more folders to remove all their issues from results
+5. **Exclude Error Codes** - Check one or more error codes to suppress them across all files
+6. **Combine Filters** - Use multiple dropdowns and exclusions together for precise filtering
+7. **Clear Filters** - Select "All Files", "All Types", or "All Codes" to reset individual filters
 
 The filters work independently and in combination, so you can filter by a specific file AND error type AND error code simultaneously for maximum precision.
 
@@ -110,6 +114,15 @@ The plugin is designed to gracefully handle DOM changes. If the structure change
 
 == Changelog ==
 
+= 1.2.0 =
+* Added folder exclusion - scrollable checkbox list to exclude all issues from one or more folders
+* Added error code exclusion - scrollable checkbox list to suppress one or more error codes across all files
+* Summary banner now shows "X of Y issues shown" in real time when exclusions reduce the result count
+* Simplified export to a single "Export JSON" button (removed CSV and TXT formats)
+* JSON export now opens with a human-readable _summary field describing active filters and exclusions
+* JSON export file now correctly excludes items that were excluded in the UI (bug fix)
+* Issue messages in JSON export are now sanitized: HTML stripped, whitespace collapsed, sentence spacing corrected
+
 = 1.1.2 =
 * Replaced MutationObserver with event-driven jQuery polling for more reliable detection
 * Improved Plugin Check completion detection accuracy
@@ -129,6 +142,9 @@ The plugin is designed to gracefully handle DOM changes. If the structure change
 * Mobile optimization
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+New folder and error code exclusion checkboxes let you suppress entire categories of issues. Export simplified to JSON-only with a human-readable summary header. Bug fix: exported files now correctly reflect all active exclusions.
 
 = 1.1.2 =
 Major architecture improvement: Replaced MutationObserver with more reliable jQuery polling for better Plugin Check completion detection. Enhanced performance and compatibility.
