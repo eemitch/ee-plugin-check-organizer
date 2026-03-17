@@ -3,15 +3,15 @@
  * Plugin Name: EE Plugin Check Organizer
  * Plugin URI: https://github.com/eemitch/ee-plugin-check-organizer
  * Description: Adds filtering and organization capabilities to the WordPress Plugin Check tool results. Filter by file name, error type, or error code with real-time search.
- * Version: 1.0.0
+ * Version: 1.3
  * Author: Element Engage
  * Author URI: https://elementengage.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: ee-plugin-check-organizer
- * Requires at least: 5.0
- * Tested up to: 6.3
- * Requires PHP: 7.4
+ * Requires at least: 6.0
+ * Tested up to: 6.9
+ * Requires PHP: 8.1
  */
 
 // Prevent direct access
