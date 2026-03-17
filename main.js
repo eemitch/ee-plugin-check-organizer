@@ -87,13 +87,7 @@
                 storeOriginalResults();
             };
             window.eePluginCheckOrganizer.debugMode = true;
-            window.eePluginCheckOrganizer.exportCSV = function() { exportResults('csv'); };
-            window.eePluginCheckOrganizer.exportJSON = function() { exportResults('json'); };
-            window.eePluginCheckOrganizer.exportTXT = function() { exportResults('txt'); };
-            window.eePluginCheckOrganizer.setExportFormat = function(format) {
-                $('#ee-export-dropdown').val(format);
-                debugLog('Export format set to:', format);
-            };
+            window.eePluginCheckOrganizer.exportJSON = function() { exportResults(); };
             window.eePluginCheckOrganizer.sortByLineAsc = function() { applySortFromDropdown('line', 'asc'); };
             window.eePluginCheckOrganizer.sortByLineDesc = function() { applySortFromDropdown('line', 'desc'); };
             window.eePluginCheckOrganizer.sortByTypeAsc = function() { applySortFromDropdown('type', 'asc'); };
@@ -132,7 +126,6 @@
             filterInterface.find('#ee-error-type-filter').html('<option value="all">All Error Types</option>');
             filterInterface.find('#ee-error-code-filter').html('<option value="all">All Error Codes</option>');
             filterInterface.find('#ee-sort-dropdown').val('line-asc');
-            filterInterface.find('#ee-export-dropdown').val('');
             filterInterface.find('#ee-hide-hidden-files').prop('checked', false); // Default to showing all files
 
             // Update subtitle
@@ -187,11 +180,10 @@
         filterInterface.find('#ee-error-type-filter').prop('disabled', false);
         filterInterface.find('#ee-error-code-filter').prop('disabled', false);
 
-        // Enable export dropdown and Go button
-        filterInterface.find('#ee-export-dropdown').prop('disabled', false);
+        // Enable export button
         filterInterface.find('#ee-export-go').prop('disabled', false);
 
-        // Enable sort dropdown and hidden files checkbox
+        // Enable sort dropdown, hidden files checkbox, and folder exclude dropdown
         filterInterface.find('#ee-sort-dropdown').prop('disabled', false);
         filterInterface.find('#ee-hide-hidden-files').prop('disabled', false);
 
@@ -204,6 +196,26 @@
         filterInterface.find('#ee-error-type-filter').html(errorTypeOptions);
         filterInterface.find('#ee-error-code-filter').html(errorCodeOptions);
 
+        // Preserve checked states before repopulating exclusion lists
+        const prevExcludedFolders = [];
+        filterInterface.find('#ee-folder-exclude-list input:checked').each(function() { prevExcludedFolders.push($(this).val()); });
+        const prevExcludedCodes = [];
+        filterInterface.find('#ee-code-exclude-list input:checked').each(function() { prevExcludedCodes.push($(this).val()); });
+
+        // Repopulate exclusion checkbox lists
+        const folderCheckboxes = getFolderCheckboxesHtml(true);
+        const codeExcludeCheckboxes = getExcludeCodeCheckboxesHtml(true);
+        filterInterface.find('#ee-folder-exclude-list').html(folderCheckboxes).removeClass('ee-disabled');
+        filterInterface.find('#ee-code-exclude-list').html(codeExcludeCheckboxes).removeClass('ee-disabled');
+
+        // Restore previously checked exclusions
+        prevExcludedFolders.forEach(val => {
+            filterInterface.find(`#ee-folder-exclude-list input[value="${val}"]`).prop('checked', true);
+        });
+        prevExcludedCodes.forEach(val => {
+            filterInterface.find(`#ee-code-exclude-list input[value="${val}"]`).prop('checked', true);
+        });
+
         // Update subtitle
         filterInterface.find('.ee-filter-subtitle').text('Organize and filter your plugin check results');
 
@@ -213,34 +225,42 @@
     /**
      * Update the scan summary display with current results
      */
-    function updateScanSummary() {
+    function updateScanSummary(displayedIssues = null) {
         const summaryElement = $('#ee-results-summary');
         if (summaryElement.length === 0 || originalResults.length === 0) {
             return;
         }
 
-        // Count unique files
+        const issues = displayedIssues !== null ? displayedIssues : originalResults;
+        const totalIssues = originalResults.length;
+        const shownIssues = issues.length;
+        const isFiltered = shownIssues !== totalIssues;
+
+        // Count unique files in the displayed set
         const uniqueFiles = new Set();
-        originalResults.forEach(issue => {
+        issues.forEach(issue => {
             uniqueFiles.add(issue.fileName);
         });
 
-        // Count issues by type
+        // Count issues by type in the displayed set
         const typeCounts = { ERROR: 0, WARNING: 0, INFO: 0 };
-        originalResults.forEach(issue => {
+        issues.forEach(issue => {
             if (typeCounts.hasOwnProperty(issue.type)) {
                 typeCounts[issue.type]++;
             }
         });
 
         // Create summary HTML
-        const totalIssues = originalResults.length;
         const fileCount = uniqueFiles.size;
+
+        let issueLabel = isFiltered
+            ? `<strong>${shownIssues}</strong> of <strong>${totalIssues}</strong> issues shown`
+            : `<strong>${totalIssues}</strong> issues found`;
 
         let summaryHtml = `
             <div class="ee-summary-stats">
                 <span class="ee-summary-item">
-                    <strong>${totalIssues}</strong> issues found
+                    ${issueLabel}
                 </span>
                 <span class="ee-summary-separator">•</span>
                 <span class="ee-summary-item">
@@ -261,7 +281,7 @@
         summaryHtml += `</div>`;
 
         summaryElement.html(summaryHtml);
-        debugLog('Scan summary updated:', { totalIssues, fileCount, typeCounts });
+        debugLog('Scan summary updated:', { totalIssues, shownIssues, fileCount, typeCounts });
     }
 
     /**
@@ -384,10 +404,12 @@
         const disabledAttr = hasResults ? '' : 'disabled';
         const disabledClass = hasResults ? '' : 'ee-disabled';
 
-        // Get list of files, error types, and error codes from results if available
+        // Get list of files, error types, error codes, and folders from results if available
         const fileOptions = getFileOptionsHtml(hasResults);
         const errorTypeOptions = getErrorTypeOptionsHtml(hasResults);
         const errorCodeOptions = getErrorCodeOptionsHtml(hasResults);
+        const folderCheckboxes = getFolderCheckboxesHtml(hasResults);
+        const codeExcludeCheckboxes = getExcludeCodeCheckboxesHtml(hasResults);
 
         filterInterface = $(`
             <div id="ee-plugin-check-filter" class="ee-filter-container ${disabledClass}">
@@ -432,6 +454,22 @@
                         </label>
                     </div>
                 </div>
+                <div class="ee-code-exclude-controls">
+                    <div class="ee-filter-dropdown-group">
+                        <span class="ee-dropdown-label"><strong>Exclude Error Codes:</strong></span>
+                        <div id="ee-code-exclude-list" class="ee-checkbox-list ${disabledClass}">
+                            ${codeExcludeCheckboxes}
+                        </div>
+                    </div>
+                </div>
+                <div class="ee-folder-controls">
+                    <div class="ee-filter-dropdown-group">
+                        <span class="ee-dropdown-label"><strong>Exclude Folders:</strong></span>
+                        <div id="ee-folder-exclude-list" class="ee-checkbox-list ${disabledClass}">
+                            ${folderCheckboxes}
+                        </div>
+                    </div>
+                </div>
                 <div class="ee-sort-controls">
                     <div class="ee-filter-dropdown-group">
                         <label for="ee-sort-dropdown" class="ee-dropdown-label">
@@ -451,16 +489,8 @@
                 </div>
                 <div class="ee-export-controls">
                     <div class="ee-filter-dropdown-group">
-                        <label for="ee-export-dropdown" class="ee-dropdown-label">
-                            <strong>Export:</strong>
-                        </label>
-                        <select id="ee-export-dropdown" class="ee-file-dropdown" ${disabledAttr}>
-                            <option value="">Select export format...</option>
-                            <option value="csv">CSV (Comma-Separated Values)</option>
-                            <option value="json">JSON (JavaScript Object Notation)</option>
-                            <option value="txt">TXT (Plain Text)</option>
-                        </select>
-                        <button id="ee-export-go" class="button button-primary" ${disabledAttr}>Go</button>
+                        <span class="ee-dropdown-label"><strong>Export:</strong></span>
+                        <button id="ee-export-go" class="button button-primary" ${disabledAttr}>Export JSON</button>
                         <span class="ee-export-note">(Exports currently filtered results)</span>
                     </div>
                 </div>
@@ -494,6 +524,61 @@
             // Fallback: simple positioning
             categoriesTable.after(filterInterface);
         }        console.log('eePCP:  Filter interface created and inserted');
+    }
+
+    /**
+     * Get HTML checkboxes for folder exclusion.
+     * Lists unique folder paths (up to 3 levels deep) found in the results.
+     */
+    function getFolderCheckboxesHtml(hasResults) {
+        if (!hasResults || originalResults.length === 0) {
+            return '<span class="ee-no-options">No folders available</span>';
+        }
+
+        const folderSet = new Set();
+        originalResults.forEach(issue => {
+            const parts = issue.fileName.split('/');
+            if (parts.length <= 1) return; // root-level file, no folder
+            const dirParts = parts.slice(0, -1).slice(0, 3); // drop filename, cap at 3 levels
+            folderSet.add(dirParts.join('/') + '/');
+        });
+
+        const sortedFolders = [...folderSet].sort();
+        if (sortedFolders.length === 0) {
+            return '<span class="ee-no-options">No folders found</span>';
+        }
+
+        return sortedFolders.map(folder => {
+            const issueCount = originalResults.filter(issue => issue.fileName.startsWith(folder)).length;
+            return `<label class="ee-checkbox-item"><input type="checkbox" class="ee-folder-exclude-cb" value="${folder}"> ${folder} (${issueCount} issues)</label>`;
+        }).join('');
+    }
+
+    /**
+     * Get HTML checkboxes for error code exclusion.
+     * Populated from all results regardless of other active filters.
+     */
+    function getExcludeCodeCheckboxesHtml(hasResults) {
+        if (!hasResults || originalResults.length === 0) {
+            return '<span class="ee-no-options">No error codes available</span>';
+        }
+
+        const codeCounts = {};
+        originalResults.forEach(issue => {
+            const mainCode = issue.code.split('.').slice(0, 3).join('.');
+            codeCounts[mainCode] = (codeCounts[mainCode] || 0) + 1;
+        });
+
+        const sortedCodes = Object.keys(codeCounts).sort();
+        if (sortedCodes.length === 0) {
+            return '<span class="ee-no-options">No error codes found</span>';
+        }
+
+        return sortedCodes.map(code => {
+            const count = codeCounts[code];
+            const displayCode = code.length > 40 ? code.substring(0, 37) + '...' : code;
+            return `<label class="ee-checkbox-item" title="${code}"><input type="checkbox" class="ee-code-exclude-cb" value="${code}"> ${displayCode} (${count} issues)</label>`;
+        }).join('');
     }
 
     /**
@@ -611,6 +696,29 @@
                 const actualFileName = issue.fileName.split('/').pop();
                 return !actualFileName.startsWith('.');
             });
+        }
+
+        // Filter out excluded folders (checkboxes)
+        const excludedFolders = [];
+        $('#ee-folder-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedFolders.push($(this).val());
+        });
+        if (excludedFolders.length > 0) {
+            filteredData = filteredData.filter(issue =>
+                !excludedFolders.some(folder => issue.fileName.startsWith(folder))
+            );
+        }
+
+        // Filter out excluded error codes (checkboxes)
+        const excludedCodes = [];
+        $('#ee-code-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedCodes.push($(this).val());
+        });
+        if (excludedCodes.length > 0) {
+            filteredData = filteredData.filter(issue => {
+                const mainCode = issue.code.split('.').slice(0, 3).join('.');
+                return !excludedCodes.includes(mainCode);
+            });
         }        // Generate new Error Code options based on filtered data
         const newErrorCodeOptions = getErrorCodeOptionsHtml(true, filteredData);
 
@@ -671,15 +779,22 @@
             applyFilters();
         });
 
-        // Export Go button event
+        // Folder exclusion checkbox changes (delegation because inner HTML is replaced on refresh)
+        $('#ee-folder-exclude-list').on('change', 'input[type="checkbox"]', function() {
+            updateErrorCodeDropdown();
+            applyFilters();
+        });
+
+        // Error code exclusion checkbox changes
+        $('#ee-code-exclude-list').on('change', 'input[type="checkbox"]', function() {
+            updateErrorCodeDropdown();
+            applyFilters();
+        });
+
+        // Export button event
         $('#ee-export-go').on('click', function(event) {
-            event.preventDefault(); // Prevent default button behavior
-            const exportFormat = $('#ee-export-dropdown').val();
-            if (exportFormat) {
-                exportResults(exportFormat);
-            } else {
-                alert('Please select an export format first.');
-            }
+            event.preventDefault();
+            exportResults();
         });
     }
 
@@ -748,7 +863,19 @@
         const selectedErrorCode = $('#ee-error-code-filter').val();
         const hideHiddenFiles = $('#ee-hide-hidden-files').is(':checked');
 
-        console.log('eePCP:  Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode, 'Hide Hidden:', hideHiddenFiles);
+        // Collect excluded folders from checkboxes
+        const excludedFolders = [];
+        $('#ee-folder-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedFolders.push($(this).val());
+        });
+
+        // Collect excluded error codes from checkboxes
+        const excludedCodes = [];
+        $('#ee-code-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedCodes.push($(this).val());
+        });
+
+        console.log('eePCP:  Applying filters - File:', selectedFile, 'Error Type:', selectedErrorType, 'Error Code:', selectedErrorCode, 'Hide Hidden:', hideHiddenFiles, 'Excluded Folders:', excludedFolders, 'Excluded Codes:', excludedCodes);
 
         // Remove any existing filtered results
         $('#ee-filtered-results').remove();
@@ -783,7 +910,25 @@
             });
         }
 
+        // Exclude all issues from excluded folders
+        if (excludedFolders.length > 0) {
+            filteredIssues = filteredIssues.filter(issue =>
+                !excludedFolders.some(folder => issue.fileName.startsWith(folder))
+            );
+        }
+
+        // Exclude all issues with excluded error codes
+        if (excludedCodes.length > 0) {
+            filteredIssues = filteredIssues.filter(issue => {
+                const mainCode = issue.code.split('.').slice(0, 3).join('.');
+                return !excludedCodes.includes(mainCode);
+            });
+        }
+
         console.log('eePCP:  Found', filteredIssues.length, 'filtered issues');
+
+        // Update the summary banner to reflect current visible counts
+        updateScanSummary(filteredIssues);
 
         // Apply sorting if a sort field is selected
         if (currentSort.field) {
@@ -792,6 +937,7 @@
         }
 
         if (filteredIssues.length === 0) {
+            updateScanSummary([]);
             const noResults = $('<div id="ee-filtered-results" class="notice notice-info"><p>No issues found matching the selected criteria.</p></div>');
             $('#plugin-check__results').after(noResults);
             return;
@@ -1089,18 +1235,16 @@
     /**
      * Export results in various formats
      */
-    function exportResults(format) {
-        debugLog('Exporting results in format:', format);
+    function exportResults() {
+        debugLog('Exporting results as JSON');
 
-        // Get currently filtered results or all results if no filter applied
-        let dataToExport = getCurrentlyDisplayedResults();
+        const dataToExport = getCurrentlyDisplayedResults();
 
         if (dataToExport.length === 0) {
             alert('No results to export. Please run a plugin check first.');
             return;
         }
 
-        // Generate filename with timestamp
         const now = new Date();
         const timestamp = now.getFullYear() + '-' +
                          String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -1108,32 +1252,10 @@
                          String(now.getHours()).padStart(2, '0') + '-' +
                          String(now.getMinutes()).padStart(2, '0');
 
-        let filename, content, mimeType;
+        const filename = `plugin-check-results_${timestamp}.json`;
+        const content = generateJSON(dataToExport);
 
-        switch (format.toLowerCase()) {
-            case 'csv':
-                filename = `plugin-check-results_${timestamp}.csv`;
-                content = generateCSV(dataToExport);
-                mimeType = 'text/csv';
-                break;
-            case 'json':
-                filename = `plugin-check-results_${timestamp}.json`;
-                content = generateJSON(dataToExport);
-                mimeType = 'application/json';
-                break;
-            case 'txt':
-                filename = `plugin-check-results_${timestamp}.txt`;
-                content = generateTXT(dataToExport);
-                mimeType = 'text/plain';
-                break;
-            default:
-                alert('Unknown export format: ' + format);
-                return;
-        }
-
-        // Create and trigger download
-        downloadFile(content, filename, mimeType);
-
+        downloadFile(content, filename, 'application/json');
         debugLog('Export completed:', filename);
     }
 
@@ -1144,39 +1266,54 @@
         const selectedFile = $('#ee-file-filter').val();
         const selectedErrorType = $('#ee-error-type-filter').val();
         const selectedErrorCode = $('#ee-error-code-filter').val();
+        const hideHiddenFiles = $('#ee-hide-hidden-files').is(':checked');
 
-        let results;
+        // Collect excluded folders and codes from checkboxes
+        const excludedFolders = [];
+        $('#ee-folder-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedFolders.push($(this).val());
+        });
+        const excludedCodes = [];
+        $('#ee-code-exclude-list input[type="checkbox"]:checked').each(function() {
+            excludedCodes.push($(this).val());
+        });
 
-        // If no filters applied, return all results
-        if ((selectedFile === 'all' || !selectedFile) &&
-            (selectedErrorType === 'all' || !selectedErrorType) &&
-            (selectedErrorCode === 'all' || !selectedErrorCode)) {
-            results = originalResults;
-        } else {
-            // Apply filters to get current results
-            results = originalResults.filter(function(issue) {
-                let includeIssue = true;
+        let results = originalResults.filter(function(issue) {
+            // File filter
+            if (selectedFile && selectedFile !== 'all') {
+                if (issue.fileName !== selectedFile) return false;
+            }
 
-                // File filter
-                if (selectedFile && selectedFile !== 'all') {
-                    includeIssue = includeIssue && (issue.fileName === selectedFile);
-                }
+            // Error type filter
+            if (selectedErrorType && selectedErrorType !== 'all') {
+                if (issue.type !== selectedErrorType) return false;
+            }
 
-                // Error type filter
-                if (selectedErrorType && selectedErrorType !== 'all') {
-                    includeIssue = includeIssue && (issue.type === selectedErrorType);
-                }
+            // Error code filter
+            if (selectedErrorCode && selectedErrorCode !== 'all') {
+                const mainCode = issue.code.split('.').slice(0, 3).join('.');
+                if (mainCode !== selectedErrorCode) return false;
+            }
 
-                // Error code filter
-                if (selectedErrorCode && selectedErrorCode !== 'all') {
-                    // Match the main error code (first 3 parts) like we do in the dropdown
-                    const mainCode = issue.code.split('.').slice(0, 3).join('.');
-                    includeIssue = includeIssue && (mainCode === selectedErrorCode);
-                }
+            // Hide hidden files
+            if (hideHiddenFiles) {
+                const actualFileName = issue.fileName.split('/').pop();
+                if (actualFileName.startsWith('.')) return false;
+            }
 
-                return includeIssue;
-            });
-        }
+            // Excluded folders
+            if (excludedFolders.length > 0) {
+                if (excludedFolders.some(folder => issue.fileName.startsWith(folder))) return false;
+            }
+
+            // Excluded error codes
+            if (excludedCodes.length > 0) {
+                const mainCode = issue.code.split('.').slice(0, 3).join('.');
+                if (excludedCodes.includes(mainCode)) return false;
+            }
+
+            return true;
+        });
 
         // Apply sorting if active
         if (currentSort.field) {
@@ -1189,38 +1326,47 @@
     /**
      * Generate CSV format
      */
-    function generateCSV(data) {
-        let csv = 'File,Line,Column,Type,Code,Message\n';
-
-        data.forEach(function(issue) {
-            // Escape CSV fields that contain commas or quotes
-            const fields = [
-                escapeCSVField(issue.fileName),
-                escapeCSVField(issue.line),
-                escapeCSVField(issue.column),
-                escapeCSVField(issue.type),
-                escapeCSVField(issue.code),
-                escapeCSVField(issue.message)
-            ];
-            csv += fields.join(',') + '\n';
-        });
-
-        return csv;
-    }
-
-    /**
-     * Generate JSON format
-     */
     function generateJSON(data) {
+        const excludedFolders = [];
+        $('#ee-folder-exclude-list input[type="checkbox"]:checked').each(function() { excludedFolders.push($(this).val()); });
+        const excludedCodes = [];
+        $('#ee-code-exclude-list input[type="checkbox"]:checked').each(function() { excludedCodes.push($(this).val()); });
+
+        const selectedFile = $('#ee-file-filter').val() || 'all';
+        const selectedErrorType = $('#ee-error-type-filter').val() || 'all';
+        const selectedErrorCode = $('#ee-error-code-filter').val() || 'all';
+        const hideHidden = $('#ee-hide-hidden-files').is(':checked');
+
+        // Build human-readable summary lines
+        const summaryLines = [`Exported: ${new Date().toLocaleString()}`, `Issues included: ${data.length} of ${originalResults.length} total`];
+        if (selectedFile !== 'all') summaryLines.push(`File filter: ${selectedFile}`);
+        if (selectedErrorType !== 'all') summaryLines.push(`Error type filter: ${selectedErrorType}`);
+        if (selectedErrorCode !== 'all') summaryLines.push(`Error code filter: ${selectedErrorCode}`);
+        if (hideHidden) summaryLines.push('Hidden files (.dotfiles) excluded');
+        if (excludedFolders.length > 0) summaryLines.push(`Excluded folders: ${excludedFolders.join(', ')}`);
+        if (excludedCodes.length > 0) summaryLines.push(`Excluded error codes: ${excludedCodes.join(', ')}`);
+        if (summaryLines.length === 2) summaryLines.push('No filters applied — all results included');
+
         const exportData = {
+            _summary: summaryLines.join(' | '),
             exportedAt: new Date().toISOString(),
             totalIssues: data.length,
             filters: {
-                file: $('#ee-file-filter').val() || 'all',
-                errorType: $('#ee-error-type-filter').val() || 'all',
-                errorCode: $('#ee-error-code-filter').val() || 'all'
+                file: selectedFile,
+                errorType: selectedErrorType,
+                errorCode: selectedErrorCode,
+                hideHiddenFiles: hideHidden,
+                excludedFolders: excludedFolders,
+                excludedErrorCodes: excludedCodes
             },
             issues: data.map(function(issue) {
+                // Strip HTML tags, collapse whitespace runs, trim
+                const cleanMessage = issue.message
+                    .replace(/<[^>]*>/g, ' ')
+                    .replace(/[\t\r\n]+/g, ' ')
+                    .replace(/ {2,}/g, ' ')
+                    .replace(/\.([A-Z])/g, '. $1')
+                    .trim();
                 return {
                     id: issue.id,
                     fileName: issue.fileName,
@@ -1228,59 +1374,12 @@
                     column: parseInt(issue.column) || 0,
                     type: issue.type,
                     code: issue.code,
-                    message: issue.message
+                    message: cleanMessage
                 };
             })
         };
 
         return JSON.stringify(exportData, null, 2);
-    }
-
-    /**
-     * Generate TXT format
-     */
-    function generateTXT(data) {
-        let txt = 'WordPress Plugin Check Results Export\n';
-        txt += '=====================================\n\n';
-        txt += `Exported: ${new Date().toLocaleString()}\n`;
-        txt += `Total Issues: ${data.length}\n\n`;
-
-        // Group by file
-        const fileGroups = {};
-        data.forEach(function(issue) {
-            if (!fileGroups[issue.fileName]) {
-                fileGroups[issue.fileName] = [];
-            }
-            fileGroups[issue.fileName].push(issue);
-        });
-
-        Object.keys(fileGroups).forEach(function(fileName) {
-            txt += `FILE: ${fileName}\n`;
-            txt += ''.padEnd(fileName.length + 6, '-') + '\n';
-
-            fileGroups[fileName].forEach(function(issue) {
-                txt += `Line ${issue.line}, Column ${issue.column}: [${issue.type}] ${issue.code}\n`;
-                txt += `  ${issue.message}\n\n`;
-            });
-            txt += '\n';
-        });
-
-        return txt;
-    }
-
-    /**
-     * Escape CSV field
-     */
-    function escapeCSVField(field) {
-        if (typeof field !== 'string') {
-            field = String(field);
-        }
-
-        // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
-        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-            return '"' + field.replace(/"/g, '""') + '"';
-        }
-        return field;
     }
 
     /**
