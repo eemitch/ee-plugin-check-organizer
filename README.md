@@ -24,7 +24,7 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 
 ### Export Functionality
 ![Export Options](screenshots/Screenshot-4.jpg)
-*Export filtered results in CSV, JSON, or TXT formats for team collaboration and analysis*
+*Export filtered results as an annotated JSON file for team collaboration and AI analysis*
 
 ## � Features
 
@@ -52,10 +52,12 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 
 - **Error Type** - Group by severity (ERROR → WARNING → INFO)
 
-### 🔍 **Smart Triple Filtering System**
+### 🔍 **Filtering & Exclusion System**
 - **File Filter** - Focus on specific plugin files
 - **Error Type Filter** - Filter by ERROR, WARNING, or INFO severity
 - **Error Code Filter** - Target specific WordPress coding standards violations
+- **Folder Exclusion Checkboxes** - Suppress all issues from one or more folders
+- **Error Code Exclusion Checkboxes** - Suppress specific error codes across all files
 
 ### 📊 **Dynamic Cascading Filters**
 - Error code dropdown automatically updates based on your file and error type selections
@@ -73,11 +75,11 @@ Transform your WordPress Plugin Check experience from overwhelming lists to orga
 - **Error Code** - Alphabetical sorting by WordPress coding standards
 - **File Name** - Alphabetical file organization
 
-### 📤 **Comprehensive Export System**
-Export your filtered results in multiple formats:
-- **CSV** - Perfect for spreadsheet analysis and sharing with teams
-- **JSON** - Structured data for programmatic analysis and AI tools
-- **TXT** - Human-readable format for documentation and reports
+### 📤 **JSON Export System**
+Export your filtered and excluded results as a clean, annotated JSON file:
+- **Annotated Summary** - First field is a human-readable `_summary` string describing active filters and exclusions
+- **Full Metadata** - Includes export timestamp, total displayed issues, and active filter details
+- **Exclusion-Aware** - Exported data reflects all active folder and error code exclusions
 
 All exports include timestamps and active filter information.
 
@@ -185,7 +187,7 @@ function applyFilters() {
 }
 ```
 
-### 4. Triple Filter System Design
+### 4. Filter & Exclusion System Design
 **Independent Filter Architecture**: Each filter operates independently and can be combined
 
 ```javascript
@@ -193,11 +195,15 @@ function applyFilters() {
 // 1. File Filter: Groups results by filename
 // 2. Error Type Filter: Groups by ERROR/WARNING/INFO
 // 3. Error Code Filter: Groups by specific WordPress coding standards
+// 4. Folder Exclusion: Checkbox list, suppresses entire folders
+// 5. Error Code Exclusion: Checkbox list, suppresses specific codes
 
 // Filter Combination Logic:
 if (selectedFile !== 'all') { /* File-specific filtering */ }
 if (selectedErrorType !== 'all') { /* Error type filtering */ }
 if (selectedErrorCode !== 'all') { /* Error code filtering */ }
+if (excludedFolders.length) { /* Folder exclusion */ }
+if (excludedCodes.length) { /* Error code exclusion */ }
 ```
 
 ### 5. WordPress Integration Points
@@ -341,7 +347,7 @@ Perfect for:
 **Developed by [ElementEngage](https://elementengage.com)** | **Maintained by [@eemitch](https://github.com/eemitch)**}
 ```
 
-### 4. Triple Filter System Design
+### 4. Filter & Exclusion System Design
 **Independent Filter Architecture**: Each filter operates independently and can be combined
 
 ```javascript
@@ -349,11 +355,15 @@ Perfect for:
 // 1. File Filter: Groups results by filename
 // 2. Error Type Filter: Groups by ERROR/WARNING/INFO
 // 3. Error Code Filter: Groups by specific WordPress coding standards
+// 4. Folder Exclusion: Checkbox list, suppresses entire folders
+// 5. Error Code Exclusion: Checkbox list, suppresses specific codes
 
 // Filter Combination Logic:
 if (selectedFile !== 'all') { /* File-specific filtering */ }
 if (selectedErrorType !== 'all') { /* Error type filtering */ }
 if (selectedErrorCode !== 'all') { /* Error code filtering */ }
+if (excludedFolders.length) { /* Folder exclusion */ }
+if (excludedCodes.length) { /* Error code exclusion */ }
 ```
 
 ### 5. Sorting System Design
@@ -465,15 +475,12 @@ User selects filter option or toggles hidden files
 
 ### 5. Export Flow
 ```
-User clicks export button (CSV/JSON/TXT)
-→ exportResults() triggered with format parameter
-→ getCurrentlyDisplayedResults() gets filtered data
-→ Format-specific generation function called:
-   - generateCSV() for comma-separated values
-   - generateJSON() for structured JSON with metadata
-   - generateTXT() for human-readable text format
+User clicks "Export JSON" button
+→ exportResults() triggered
+→ getCurrentlyDisplayedResults() gets filtered and excluded data
+→ generateJSON() builds annotated JSON with _summary, metadata, and issues
 → downloadFile() creates blob and triggers download
-→ File saved with timestamp: plugin-check-results_YYYY-MM-DD_HH-MM.ext
+→ File saved with timestamp: plugin-check-results_YYYY-MM-DD_HH-MM.json
 ```
 
 ### 5. Sort Flow
@@ -516,63 +523,42 @@ if (DEBUG_MODE) {
 
 ## Export System
 
-### Export Formats Supported
-1. **CSV (Comma-Separated Values)**
-   - Standard tabular format for spreadsheet applications
-   - Headers: File, Line, Column, Type, Code, Message
-   - Automatic field escaping for commas and quotes
-   - Perfect for analysis in Excel, Google Sheets
-
-2. **JSON (JavaScript Object Notation)**
-   - Structured data with metadata
-   - Includes export timestamp, total issues count, active filters
-   - Nested structure with issue arrays
-   - Ideal for programmatic analysis and AI processing
-
-3. **TXT (Plain Text)**
-   - Human-readable format grouped by file
-   - Includes export header with timestamp and counts
-   - File-grouped layout for easy reading
-   - Perfect for sharing results in emails or documentation
+### Export Format
+**JSON (JavaScript Object Notation)**
+- First key is `_summary`: a human-readable pipe-delimited string describing active filters and exclusions
+- Includes export timestamp, total displayed issues, and active filter details
+- Reflects all active exclusions (folder checkboxes and error code checkboxes)
+- Ideal for programmatic analysis, AI processing, and team sharing
 
 ### Export Data Structure
 ```javascript
-// CSV: Simple tabular format
-File,Line,Column,Type,Code,Message
-"functions.php","45","12","ERROR","WordPress.Security.EscapeOutput.OutputNotEscaped","Data is output without being escaped"
-
-// JSON: Structured with metadata
 {
+  "_summary": "Exported: 2025-09-17T10:30:00.000Z | Shown: 12 of 15 | File: all | Type: ERROR | Code: all | Excluded Folders: vendor/ | Excluded Codes: none | Hidden Files: shown",
   "exportedAt": "2025-09-17T10:30:00.000Z",
-  "totalIssues": 15,
+  "totalDisplayedIssues": 12,
   "filters": {
-    "file": "functions.php",
+    "file": "all",
     "errorType": "ERROR",
-    "errorCode": "all"
+    "errorCode": "all",
+    "excludedFolders": ["vendor/"],
+    "excludedErrorCodes": [],
+    "hideHiddenFiles": false
   },
   "issues": [...]
 }
-
-// TXT: Human-readable format
-FILE: functions.php
--------------------
-Line 45, Column 12: [ERROR] WordPress.Security.EscapeOutput.OutputNotEscaped
-  Data is output without being escaped
 ```
 
 ### Export Functions Available
-- `exportResults(format)` - Main export function with format parameter
-- `getCurrentlyDisplayedResults()` - Gets filtered data for export
-- `generateCSV()` - Creates CSV format string
-- `generateJSON()` - Creates JSON format string
-- `generateTXT()` - Creates TXT format string
+- `exportResults()` - Main export function (always JSON)
+- `getCurrentlyDisplayedResults()` - Gets filtered and excluded data for export
+- `generateJSON()` - Creates annotated JSON with `_summary`, metadata, and issues
 - `downloadFile()` - Handles browser download with proper MIME types
 
 ### File Naming Convention
 All exports use timestamp-based naming:
 ```
-plugin-check-results_YYYY-MM-DD_HH-MM.{ext}
-Example: plugin-check-results_2025-09-17_10-30.csv
+plugin-check-results_YYYY-MM-DD_HH-MM.json
+Example: plugin-check-results_2025-09-17_10-30.json
 ```
 
 ## WordPress Integration Points
@@ -600,9 +586,7 @@ window.eePluginCheckOrganizer = {
     exportResults: exportResults,
     // Debug mode additions:
     testScan: function() { /* ... */ },
-    exportCSV: function() { /* Export to CSV */ },
     exportJSON: function() { /* Export to JSON */ },
-    exportTXT: function() { /* Export to TXT */ },
     debugMode: true
 };
 ```

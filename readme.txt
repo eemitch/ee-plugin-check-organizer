@@ -2,7 +2,7 @@
 Contributors: eemitch
 Tags: plugin-check, development, debugging, organization, filtering, export
 Requires at least: 5.0
-Tested up to: 6.3
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 1.2.0
 License: GPLv2 or later
@@ -32,9 +32,9 @@ Enhance the WordPress Plugin Check tool with powerful filtering, sorting, and ex
 
 = How It Works =
 
-This plugin works by enhancing the existing Plugin Check tool results page with a powerful triple dropdown filtering interface. It doesn't modify the Plugin Check tool itself, but rather adds a layer of organization on top of the results.
+This plugin works by enhancing the existing Plugin Check tool results page with a powerful filtering and exclusion interface. It doesn't modify the Plugin Check tool itself, but rather adds a layer of organization on top of the results.
 
-When you run a plugin check, you'll see three dropdown filters above the results that allow you to:
+When you run a plugin check, you'll see filtering controls above the results that allow you to:
 
 1. **Filter by File** - Select a specific file from the dropdown to see only results from that file
 2. **Filter by Error Type** - Choose ERROR, WARNING, or INFO to see only that severity level
@@ -70,14 +70,14 @@ The filters work independently and in combination, so you can filter by a specif
 1. Upload the `ee-plugin-check-organizer` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Navigate to Tools > Plugin Check to use the enhanced interface
-4. Run a plugin check to see the three dropdown filters above the results
+4. Run a plugin check to see the filtering and exclusion controls above the results
 
 = Manual Installation =
 
 1. Download the plugin files
 2. Extract the files to your `/wp-content/plugins/ee-plugin-check-organizer/` directory
 3. Activate the plugin in your WordPress admin panel
-4. The triple dropdown filtering interface will automatically appear when using Plugin Check
+4. The filtering and exclusion controls will automatically appear when using Plugin Check
 
 == Frequently Asked Questions ==
 
@@ -104,6 +104,10 @@ Yes. This plugin works with the standard Plugin Check DOM structure and doesn't 
 = What happens if Plugin Check updates and changes its structure? =
 
 The plugin is designed to gracefully handle DOM changes. If the structure changes significantly, the filtering may not work, but it won't break Plugin Check functionality. The debug mode can be enabled for troubleshooting if needed.
+
+= Will the organizer interface disappear if Plugin Check updates? =
+
+The organizer is built to degrade gracefully. If Plugin Check's output structure changes in a future update, the organizer panel may simply not render — but Plugin Check itself will continue to work normally. If the interface stops appearing after a Plugin Check update, check your browser console (look for `eePCP:` prefixed messages) for diagnostic information.
 
 == Screenshots ==
 
